@@ -72,11 +72,27 @@ const RoulettePage = () => {
       ctx.restore();
     }
 
+    // Draw the mask
+    if (highlightedIndex !== null) {
+      for (let i = 0; i < numSlices; i++) {
+        if (i !== highlightedIndex) {
+          const startAngle = i * sliceAngle;
+          const endAngle = startAngle + sliceAngle;
+          ctx.beginPath();
+          ctx.moveTo(centerX, centerY);
+          ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+          ctx.closePath();
+          ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
+          ctx.fill();
+        }
+      }
+    }
+
     ctx.restore();
 
     // Draw the center image
     const img = new Image();
-    img.src = "/path/to/your/image.png"; // Replace with the path to your image
+    img.src = "../favicon.ico"; // Replace with the path to your image
     img.onload = () => {
       ctx.drawImage(img, centerX - 50, centerY - 50, 100, 100); // Adjust the size and position as needed
     };
@@ -97,6 +113,8 @@ const RoulettePage = () => {
       ...prize,
       probability: prize.quantity / (totalQuantity + 1),
     }));
+    console.log(prizeProbabilities);
+    console.log(noPrizeProbability);
 
     const random = Math.random();
     let accumulated = noPrizeProbability;
@@ -118,7 +136,6 @@ const RoulettePage = () => {
               console.error(error);
               setResult("Error updating the prize");
             } else {
-              setResult(drawnPrize.prize);
               setPrizes((prevPrizes) =>
                 prevPrizes.map((p) =>
                   p.id === drawnPrize.id
@@ -168,14 +185,16 @@ const RoulettePage = () => {
   };
 
   return (
-    <div className="roulette-container">
-      <canvas
-        ref={canvasRef}
-        width="400"
-        height="400"
-        onClick={drawPrize}
-      ></canvas>
-      <p className="result">{result}</p>
+    <div className="flex items-center justify-center h-screen">
+      <div className="roulette-container">
+        <canvas
+          ref={canvasRef}
+          width="400"
+          height="400"
+          onClick={drawPrize}
+        ></canvas>
+        <p className="result">{result}</p>
+      </div>
     </div>
   );
 };
