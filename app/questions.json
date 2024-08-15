@@ -1,0 +1,43 @@
+{
+  "questions": [
+    {
+      "question": "Você já conhece a Afya?",
+      "options": ["Sim", "Não"]
+    },
+    {
+      "question": "Conta pra gente: em que momento da sua jornada você está?",
+      "options": [
+        "Sou estudante de medicina",
+        "Sou docnete",
+        "Sou profissional de outra área"
+      ]
+    },
+    {
+      "question": "Você se identifica como:",
+      "options": [
+        "Profissional da indústria de saúde - Setor Privado",
+        "Profissional da indústria de saúde - Setor Público",
+        "Outros"
+      ]
+    },
+    {
+      "question": "Em que período da jornada acadêmica você está?",
+      "options": ["1º ao 4º período", "5º ao 6º período"]
+    },
+    {
+      "question": "Em qual área você atua?",
+      "options": ["Área médica", "Outra área"]
+    },
+    {
+      "question": "Há quanto tempo você é formado?",
+      "options": [
+        "Até 4 anos de formação",
+        "5 a 9 anos de formação",
+        "10 a 19 anos de formação",
+        "20 a 34 anos de formação",
+        "+35 anos de formação"
+      ]
+    }
+  ],
+  "prizeGroups": {}
+}
