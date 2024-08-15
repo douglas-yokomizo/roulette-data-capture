@@ -1,23 +1,17 @@
-import { createClient } from "@/utils/supabase/server";
+import Image from "next/image";
+import afyaLogo from "./favicon.ico";
 import Link from "next/link";
 
-export default async function Index() {
-  const canInitSupabaseClient = () => {
-    // This function is just for the interactive tutorial.
-    // Feel free to remove it once you have Supabase connected.
-    try {
-      createClient();
-      return true;
-    } catch (e) {
-      return false;
-    }
-  };
-
-  const isSupabaseConnected = canInitSupabaseClient();
-
+const HomePage = () => {
   return (
-    <div className="flex-1 w-full flex flex-col gap-20 items-center">
-      <Link href={"/roulette"}>Roleta</Link>
-    </div>
+    <Link href={"/signup"}>
+      <div className="flex-1 w-full h-screen justify-center flex flex-col gap-20 items-center">
+        <h3>Premiações exclusivas</h3>
+        <Image src={afyaLogo} alt="Afya Logo" />
+        <p>Toque para iniciar</p>
+      </div>
+    </Link>
   );
-}
+};
+
+export default HomePage;
