@@ -132,8 +132,9 @@ const SignupPage = () => {
             onChange={(e) => setPrivacyPolicy(e.target.checked)}
             className="mr-2"
           />
-          <label htmlFor="privacyPolicy" className="text-pink-600 font-bold">
-            Concordo com as políticas de privacidade
+          <label htmlFor="privacyPolicy" className="text-gray-400">
+            Ao informar meus dados, concordo com a{" "}
+            <u className="text-pink-600">política de privacidade</u>
           </label>
         </div>
         <div className="flex items-center mb-6">
@@ -144,7 +145,7 @@ const SignupPage = () => {
             onChange={(e) => setNewsletter(e.target.checked)}
             className="mr-2"
           />
-          <label htmlFor="newsletter" className="text-pink-600 font-bold">
+          <label htmlFor="newsletter" className="text-pink-600 text-gray-400">
             Aceito receber novidades e comunicações
           </label>
         </div>
