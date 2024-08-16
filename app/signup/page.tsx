@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { useState, useContext } from "react";
+import { useContext } from "react";
 import afyaLogo from "../favicon.ico";
 import { SignupContext } from "../contexts/SignupContext";
 import { useRouter } from "next/navigation";
@@ -28,7 +28,7 @@ interface InputFieldProps {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   placeholder: string;
   maxLength?: number;
-  name: string; // Adicionando o atributo name
+  name: string;
 }
 
 const InputField = ({
@@ -39,7 +39,7 @@ const InputField = ({
   onChange,
   placeholder,
   maxLength,
-  name, // Adicionando o atributo name
+  name,
 }: InputFieldProps) => (
   <div className="flex items-center mb-6 border-b-[1px] border-black">
     <label
@@ -55,7 +55,7 @@ const InputField = ({
       value={value}
       onChange={onChange}
       maxLength={maxLength}
-      name={name} // Adicionando o atributo name
+      name={name}
       className="w-full py-2 border-gray-300 focus:outline-none  text-gray-400"
     />
   </div>

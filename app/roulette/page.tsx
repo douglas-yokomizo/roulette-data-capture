@@ -1,15 +1,16 @@
 "use client";
-import React, { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { supabase } from "@/utils/supabase/client";
-import "./roulette.module.css"; // Import the CSS file for styling
+import "./roulette.module.css";
 
 const RoulettePage = () => {
   const [prizes, setPrizes] = useState<any[]>([]);
-  const [result, setResult] = useState("");
   const [angle, setAngle] = useState(0);
   const [isSpinning, setIsSpinning] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState<number | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchPrizes = async () => {
@@ -32,7 +33,16 @@ const RoulettePage = () => {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const numSlices = prizes.length;
+    const extendedPrizes = [
+      ...prizes,
+      { prize: "Não foi dessa vez", active: true, quantity: 1 },
+    ];
+    let numSlices = extendedPrizes.length;
+
+    if (numSlices <= 4 || numSlices % 2 !== 0) {
+      numSlices *= 2;
+    }
+
     const sliceAngle = (2 * Math.PI) / numSlices;
     const radius = canvas.width / 2;
     const centerX = canvas.width / 2;
@@ -54,10 +64,10 @@ const RoulettePage = () => {
       ctx.closePath();
       ctx.fillStyle =
         i === highlightedIndex
-          ? "#FFD700"
+          ? "#db2777"
           : i % 2 === 0
-          ? "#FFDDC1"
-          : "#FFABAB";
+          ? "#FFFFF1"
+          : "#db2777 ";
       ctx.fill();
       ctx.stroke();
 
@@ -67,12 +77,12 @@ const RoulettePage = () => {
       ctx.textAlign = "right";
       ctx.fillStyle = "#000";
       ctx.font = "24px Arial";
-      const prizeText = prizes[i]?.prize || "No Prize";
+      const prizeText =
+        extendedPrizes[i % extendedPrizes.length]?.prize || "No Prize";
       ctx.fillText(prizeText, radius - 10, 10);
       ctx.restore();
     }
 
-    // Draw the mask
     if (highlightedIndex !== null) {
       for (let i = 0; i < numSlices; i++) {
         if (i !== highlightedIndex) {
@@ -90,11 +100,10 @@ const RoulettePage = () => {
 
     ctx.restore();
 
-    // Draw the center image
     const img = new Image();
-    img.src = "../favicon.ico"; // Replace with the path to your image
+    img.src = "../favicon.ico";
     img.onload = () => {
-      ctx.drawImage(img, centerX - 50, centerY - 50, 100, 100); // Adjust the size and position as needed
+      ctx.drawImage(img, centerX - 50, centerY - 50, 100, 100);
     };
   };
 
@@ -120,7 +129,6 @@ const RoulettePage = () => {
     let accumulated = noPrizeProbability;
 
     if (random < accumulated) {
-      setResult("No Prize");
       spinRoulette(prizes.length);
     } else {
       for (let i = 0; i < prizeProbabilities.length; i++) {
@@ -134,7 +142,6 @@ const RoulettePage = () => {
               .eq("id", drawnPrize.id);
             if (error) {
               console.error(error);
-              setResult("Error updating the prize");
             } else {
               setPrizes((prevPrizes) =>
                 prevPrizes.map((p) =>
@@ -146,7 +153,6 @@ const RoulettePage = () => {
               spinRoulette(i);
             }
           } else {
-            setResult("No Prize");
             spinRoulette(prizes.length);
           }
           break;
@@ -156,28 +162,33 @@ const RoulettePage = () => {
   };
 
   const spinRoulette = (slot: number) => {
-    const degreesPerSlot = 360 / prizes.length;
-    const targetAngle = 360 * 3 + slot * degreesPerSlot;
-    const duration = 3000; // Duration of the spin in milliseconds
+    const duration = 3000;
+    const finalAngle = (360 / prizes.length) * slot + 360 * 5;
     const startTime = performance.now();
 
     const animate = (currentTime: number) => {
       const elapsedTime = currentTime - startTime;
       const progress = Math.min(elapsedTime / duration, 1);
-      const currentAngle = progress * targetAngle;
+      const currentAngle = finalAngle * progress;
+
       setAngle(currentAngle);
 
       if (progress < 1) {
         requestAnimationFrame(animate);
       } else {
         setIsSpinning(false);
-        // Determine the prize at the top
-        const finalAngle = currentAngle % 360;
-        const prizeIndex =
-          Math.floor(finalAngle / degreesPerSlot) % prizes.length;
-        setHighlightedIndex(prizeIndex);
-        const prizeText = prizes[prizeIndex]?.prize || "No Prize";
-        setResult(prizeText);
+        setHighlightedIndex(slot);
+
+        const resultPrize =
+          slot === prizes.length ? "No Prize" : prizes[slot].prize;
+        const prizeNames = prizes.map((p) => p.prize);
+        setTimeout(() => {
+          router.push(
+            `/roulette/result?prize=${resultPrize}&prizes=${JSON.stringify(
+              prizeNames
+            )}`
+          );
+        }, 500);
       }
     };
 
@@ -189,11 +200,10 @@ const RoulettePage = () => {
       <div className="roulette-container">
         <canvas
           ref={canvasRef}
-          width="400"
-          height="400"
+          width="600"
+          height="600"
           onClick={drawPrize}
         ></canvas>
-        <p className="result">{result}</p>
       </div>
     </div>
   );
