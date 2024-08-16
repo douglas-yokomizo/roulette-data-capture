@@ -188,13 +188,16 @@ const RoulettePage = () => {
               prizeNames
             )}`
           );
-        }, 500);
+        }, 2000);
       }
     };
 
     requestAnimationFrame(animate);
   };
 
+  {
+    !prizes && <p>Carregando...</p>;
+  }
   return (
     <div className="flex items-center justify-center h-screen">
       <div className="roulette-container">

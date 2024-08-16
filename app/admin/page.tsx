@@ -9,12 +9,13 @@ export default function AdminPage() {
   const [quantity, setQuantity] = useState(0);
   const [imageUrl, setImageUrl] = useState("");
 
+  const fetchPrizes = async () => {
+    const { data, error } = await supabase.from("prizes").select("*");
+    if (error) console.error(error);
+    else setPrizes(data);
+  };
+
   useEffect(() => {
-    const fetchPrizes = async () => {
-      const { data, error } = await supabase.from("prizes").select("*");
-      if (error) console.error(error);
-      else setPrizes(data);
-    };
     fetchPrizes();
   }, []);
 
@@ -26,7 +27,7 @@ export default function AdminPage() {
     if (error) console.error(error);
     else {
       console.log("Prize inserted:", data);
-      setPrizes([...prizes, ...(data || [])]);
+      fetchPrizes(); // Atualiza a lista de prêmios após a inserção
     }
   };
 
@@ -53,6 +54,14 @@ export default function AdminPage() {
       setPrizes(
         prizes.map((p) => (p.id === id ? { ...p, quantity: newQuantity } : p))
       );
+    }
+  };
+
+  const deletePrize = async (id: number) => {
+    const { data, error } = await supabase.from("prizes").delete().eq("id", id);
+    if (error) console.error(error);
+    else {
+      setPrizes(prizes.filter((p) => p.id !== id));
     }
   };
 
@@ -156,6 +165,12 @@ export default function AdminPage() {
               } text-white`}
             >
               {prize.active ? "Desativar" : "Ativar"}
+            </button>
+            <button
+              onClick={() => deletePrize(prize.id)}
+              className="ml-4 py-1 px-2 rounded bg-red-500 hover:bg-red-700 text-white"
+            >
+              Excluir
             </button>
           </li>
         ))}
