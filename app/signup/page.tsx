@@ -39,7 +39,10 @@ const InputField = ({
   maxLength,
 }: InputFieldProps) => (
   <div className="flex items-center mb-6 border-b-[1px] border-black">
-    <label htmlFor={id} className="text-pink-600 mr-2 font-bold">
+    <label
+      htmlFor={id}
+      className="text-pink-600 mr-2 font-bold whitespace-nowrap"
+    >
       {label}
     </label>
     <input
