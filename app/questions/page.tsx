@@ -1,9 +1,11 @@
 "use client";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { SignupContext } from "../contexts/SignupContext";
 import { saveChoice } from "../../utils/supabase/client";
 import { useRouter } from "next/navigation";
 
 const Page1 = () => {
+  const { signupData } = useContext(SignupContext);
   const [showModal, setShowModal] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
@@ -33,18 +35,26 @@ const Page1 = () => {
     setShowConfirmModal(false);
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     if (selectedOption) {
-      saveChoice(selectedOption);
+      const dataToSave = {
+        ...signupData,
+        choice: selectedOption,
+      };
+      await saveChoice(dataToSave);
       setShowConfirmModal(false);
       router.push("/roulette");
     }
   };
 
-  const handleFinish = () => {
+  const handleFinish = async () => {
     if (selectedModalOption) {
       const formattedChoice = `Estudante: ${selectedModalOption}`;
-      saveChoice(formattedChoice);
+      const dataToSave = {
+        ...signupData,
+        choice: formattedChoice,
+      };
+      await saveChoice(dataToSave);
       setShowModal(false);
       router.push("/roulette");
     }
@@ -171,7 +181,7 @@ const Page1 = () => {
                 onClick={handleConfirmCloseModal}
                 className="border-2 border-pink-400 bg-pink-600 text-white font-bold py-2 px-4 rounded"
               >
-                Cancelar
+                Não
               </button>
             </div>
           </div>

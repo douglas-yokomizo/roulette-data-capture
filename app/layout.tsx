@@ -1,5 +1,6 @@
 import { GeistSans } from "geist/font/sans";
 import "./globals.css";
+import { SignupProvider } from "./contexts/SignupContext";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -17,10 +18,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={GeistSans.className}>
-      <body>
-        <main>{children}</main>
-      </body>
-    </html>
+    <SignupProvider>
+      <html lang="en" className={GeistSans.className}>
+        <body>
+          <main>{children}</main>
+        </body>
+      </html>
+    </SignupProvider>
   );
 }
