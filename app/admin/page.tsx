@@ -27,7 +27,7 @@ export default function AdminPage() {
     if (error) console.error(error);
     else {
       console.log("Prize inserted:", data);
-      fetchPrizes(); // Atualiza a lista de prêmios após a inserção
+      fetchPrizes();
     }
   };
 
