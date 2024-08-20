@@ -1,27 +1,28 @@
-// InputField.tsx
-import React from "react";
-
 interface InputFieldProps {
   id: string;
   label: string;
   type: string;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
   placeholder?: string;
   maxLength?: number;
   name: string;
+  error?: string;
 }
 
-const InputField: React.FC<InputFieldProps> = ({
+const InputField = ({
   id,
   label,
   type,
   value,
   onChange,
+  onBlur,
   placeholder,
   maxLength,
   name,
-}) => (
+  error,
+}: InputFieldProps) => (
   <div className="relative mb-6">
     <input
       id={id}
@@ -29,9 +30,10 @@ const InputField: React.FC<InputFieldProps> = ({
       placeholder=""
       value={value}
       onChange={onChange}
+      onBlur={onBlur}
       maxLength={maxLength}
       name={name}
-      className={`input-field text-gray-500 ${name === "cpf" ? "cpf" : ""} ${
+      className={`input-field ${name === "cpf" ? "cpf" : ""} ${
         name === "dob" ? "dob" : ""
       }`}
       autoComplete="off"
@@ -40,11 +42,12 @@ const InputField: React.FC<InputFieldProps> = ({
       {label}
     </label>
     <span
-      onClick={() => document.getElementById(id)?.focus()}
       className="input-placeholder"
+      onClick={() => document.getElementById(id)?.focus()}
     >
       {placeholder}
     </span>
+    {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
   </div>
 );
 

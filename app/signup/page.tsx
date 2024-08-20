@@ -1,16 +1,24 @@
 // SignupPage.tsx
 "use client";
 import Image from "next/image";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import afyaLogo from "../public/images/logoRosa.png";
 import { SignupContext } from "../contexts/SignupContext";
 import { useRouter } from "next/navigation";
 import InputField from "../components/InputField";
 import { formatCpf, formatPhone, formatDate } from "../utils/formatters";
+import { checkCpfExists } from "../utils/supabase/client";
 
 const SignupPage: React.FC = () => {
   const { signupData, setSignupData } = useContext(SignupContext);
   const router = useRouter();
+
+  const [errors, setErrors] = useState({
+    name: "",
+    cpf: "",
+    phone: "",
+    email: "",
+  });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -18,6 +26,7 @@ const SignupPage: React.FC = () => {
       ...signupData,
       [name]: type === "checkbox" ? checked : value,
     });
+    setErrors({ ...errors, [name]: "" });
   };
 
   const handleCpfChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -26,6 +35,7 @@ const SignupPage: React.FC = () => {
       ...signupData,
       cpf: formattedCpf,
     });
+    setErrors({ ...errors, cpf: "" });
   };
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,6 +44,7 @@ const SignupPage: React.FC = () => {
       ...signupData,
       phone: formattedPhone,
     });
+    setErrors({ ...errors, phone: "" });
   };
 
   const handleDobChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -44,20 +55,42 @@ const SignupPage: React.FC = () => {
     });
   };
 
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    if (!value) {
+      setErrors({ ...errors, [name]: "Este campo é obrigatório" });
+    }
+  };
+
   const isFormValid = () => {
     return (
       signupData.cpf &&
       signupData.name &&
-      signupData.dob &&
       signupData.phone &&
       signupData.email &&
       signupData.privacyPolicy
     );
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    router.push("/questions");
+
+    const cpfExists = await checkCpfExists(signupData.cpf);
+    if (cpfExists) {
+      setErrors({ ...errors, cpf: "Este CPF já participou" });
+      return;
+    }
+
+    if (isFormValid()) {
+      router.push("/questions");
+    } else {
+      setErrors({
+        name: signupData.name ? "" : "Este campo é obrigatório",
+        cpf: signupData.cpf ? "" : "Este campo é obrigatório",
+        phone: signupData.phone ? "" : "Este campo é obrigatório",
+        email: signupData.email ? "" : "Este campo é obrigatório",
+      });
+    }
   };
 
   return (
@@ -72,8 +105,10 @@ const SignupPage: React.FC = () => {
           type="text"
           value={signupData.name}
           onChange={handleChange}
+          onBlur={handleBlur}
           maxLength={100}
           name="name"
+          error={errors.name}
         />
         <InputField
           id="cpf"
@@ -81,9 +116,11 @@ const SignupPage: React.FC = () => {
           type="text"
           value={signupData.cpf}
           onChange={handleCpfChange}
+          onBlur={handleBlur}
           placeholder="000.000.000-00"
           maxLength={14}
           name="cpf"
+          error={errors.cpf}
         />
         <InputField
           id="dob"
@@ -91,6 +128,7 @@ const SignupPage: React.FC = () => {
           type="text"
           value={signupData.dob}
           onChange={handleDobChange}
+          onBlur={handleBlur}
           name="dob"
           placeholder="00/00/0000"
           maxLength={10}
@@ -101,9 +139,11 @@ const SignupPage: React.FC = () => {
           type="tel"
           value={signupData.phone}
           onChange={handlePhoneChange}
+          onBlur={handleBlur}
           placeholder="(00) 00000-0000"
           maxLength={15}
           name="phone"
+          error={errors.phone}
         />
         <InputField
           id="email"
@@ -111,7 +151,9 @@ const SignupPage: React.FC = () => {
           type="email"
           value={signupData.email}
           onChange={handleChange}
+          onBlur={handleBlur}
           name="email"
+          error={errors.email}
         />
         <div className="flex items-center mt-10 mb-6">
           <input
