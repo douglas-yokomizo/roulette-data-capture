@@ -1,5 +1,7 @@
 "use client";
+import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
+import logoAfya from "../../public/images/logoBranco.png";
 
 const ResultPage = () => {
   const searchParams = useSearchParams();
@@ -10,30 +12,34 @@ const ResultPage = () => {
   const parsedPrizes = prizes ? JSON.parse(prizes as string) : [];
 
   return (
-    <div className="flex items-center justify-center h-screen">
-      <div className="result-container">
-        <h1 className="text-2xl font-bold mb-4">Resultado</h1>
-        <ul className="bg-white shadow-md rounded p-4">
+    <div className="flex items-center flex-col bg-fade bg-center bg-cover justify-center h-screen">
+      <div className="w-full">
+        <h1 className="text-6xl font-semibold text-center text-white mb-4">
+          Parabéns! <br /> Você ganhou
+        </h1>
+        <ul className="flex flex-col gap-4 p-4 w-full items-center">
           {parsedPrizes.map((p: string, index: number) => (
             <li
               key={index}
-              className={`flex justify-between items-center mb-2 p-2 border-b ${
-                p === prize ? "bg-yellow-200" : ""
+              className={`flex gap-4 items-center text-2xl mb-2 w-3/5 py-6 px-8 border rounded-xl ${
+                p === prize
+                  ? "bg-pink-100 text-afya-pink"
+                  : "text-pink-100 bg-afya-pink"
               }`}
             >
-              <span>{p}</span>
+              <span className="text-5xl">{index + 1}</span>
+              {p}
             </li>
           ))}
         </ul>
-        <div className="mt-4">
-          <button
-            onClick={() => router.push("/")}
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          >
-            Voltar
-          </button>
-        </div>
       </div>
+      <Image src={logoAfya} alt="" width={300} className="my-10" />
+      <button
+        onClick={() => router.push("/")}
+        className="bg-pink-100 text-afya-pink font-bold py-6 px-8 rounded focus:outline-none focus:shadow-outline"
+      >
+        &lt;&lt; Voltar ao início
+      </button>
     </div>
   );
 };

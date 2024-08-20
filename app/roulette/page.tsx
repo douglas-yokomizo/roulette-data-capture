@@ -2,7 +2,10 @@
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/app/utils/supabase/client";
+import logoAfya from "../public/images/logoRosa.png";
+import logoRoleta from "../public/images/logoRoleta.png";
 import "./roulette.module.css";
+import Image from "next/image";
 
 const RoulettePage = () => {
   const [prizes, setPrizes] = useState<any[]>([]);
@@ -11,6 +14,24 @@ const RoulettePage = () => {
   const [highlightedIndex, setHighlightedIndex] = useState<number | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const router = useRouter();
+  const logoRef = useRef<HTMLImageElement | null>(null);
+
+  const keywordMaskMap: { [key: string]: string } = {
+    "premio 1": "1",
+    "premio 2": "2",
+    "premio 3": "3",
+    "Não foi dessa vez": "4",
+  };
+
+  const getPrizeMask = (prize: string) => {
+    const normalizedPrize = prize.toLowerCase();
+    for (const keyword in keywordMaskMap) {
+      if (normalizedPrize.includes(keyword.toLowerCase())) {
+        return keywordMaskMap[keyword];
+      }
+    }
+    return prize;
+  };
 
   useEffect(() => {
     const fetchPrizes = async () => {
@@ -26,6 +47,15 @@ const RoulettePage = () => {
       drawRoulette();
     }
   }, [prizes, angle, highlightedIndex]);
+
+  useEffect(() => {
+    const img = document.createElement("img");
+    img.src = logoRoleta.src;
+    img.onload = () => {
+      logoRef.current = img;
+      drawRoulette();
+    };
+  }, []);
 
   const drawRoulette = () => {
     const canvas = canvasRef.current;
@@ -62,12 +92,13 @@ const RoulettePage = () => {
       ctx.moveTo(centerX, centerY);
       ctx.arc(centerX, centerY, radius, startAngle, endAngle);
       ctx.closePath();
-      ctx.fillStyle =
+      const fillStyle =
         i === highlightedIndex
-          ? "#db2777"
+          ? "#D8005F"
           : i % 2 === 0
-          ? "#FFFFF1"
-          : "#db2777 ";
+          ? "#fce7f3"
+          : "#D8005F";
+      ctx.fillStyle = fillStyle;
       ctx.fill();
       ctx.stroke();
 
@@ -75,11 +106,12 @@ const RoulettePage = () => {
       ctx.translate(centerX, centerY);
       ctx.rotate(startAngle + sliceAngle / 2);
       ctx.textAlign = "right";
-      ctx.fillStyle = "#000";
-      ctx.font = "24px Arial";
-      const prizeText =
-        extendedPrizes[i % extendedPrizes.length]?.prize || "No Prize";
-      ctx.fillText(prizeText, radius - 10, 10);
+      ctx.fillStyle = fillStyle === "#D8005F" ? "#fce7f3" : "#D8005F";
+      ctx.font = "80px SansBeanBody";
+      const prizeText = getPrizeMask(
+        extendedPrizes[i % extendedPrizes.length]?.prize || "No Prize"
+      );
+      ctx.fillText(prizeText, radius - 30, 10);
       ctx.restore();
     }
 
@@ -100,11 +132,9 @@ const RoulettePage = () => {
 
     ctx.restore();
 
-    const img = new Image();
-    img.src = "../favicon.ico";
-    img.onload = () => {
-      ctx.drawImage(img, centerX - 50, centerY - 50, 100, 100);
-    };
+    if (logoRef.current) {
+      ctx.drawImage(logoRef.current, centerX - 50, centerY - 50, 100, 100);
+    }
   };
 
   const drawPrize = async () => {
@@ -183,11 +213,15 @@ const RoulettePage = () => {
           slot === prizes.length ? "No Prize" : prizes[slot].prize;
         const prizeNames = prizes.map((p) => p.prize);
         setTimeout(() => {
-          router.push(
-            `/roulette/result?prize=${resultPrize}&prizes=${JSON.stringify(
-              prizeNames
-            )}`
-          );
+          if (resultPrize === "No Prize") {
+            router.push("/roulette/no-prize");
+          } else {
+            router.push(
+              `/roulette/result?prize=${resultPrize}&prizes=${JSON.stringify(
+                prizeNames
+              )}`
+            );
+          }
         }, 2000);
       }
     };
@@ -199,8 +233,11 @@ const RoulettePage = () => {
     !prizes && <p>Carregando...</p>;
   }
   return (
-    <div className="flex items-center justify-center h-screen">
-      <div className="roulette-container">
+    <div className="flex items-center flex-col gap-6 justify-center h-screen bg-branco bg-cover bg-center">
+      <h1 className="text-5xl text-center font-semibold text-afya-pink">
+        Toque para <br /> ganhar um brinde
+      </h1>
+      <div className="roulette-container mb-10">
         <canvas
           ref={canvasRef}
           width="600"
@@ -208,6 +245,7 @@ const RoulettePage = () => {
           onClick={drawPrize}
         ></canvas>
       </div>
+      <Image src={logoAfya} alt="Logo Afya" />
     </div>
   );
 };

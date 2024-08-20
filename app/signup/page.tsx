@@ -1,4 +1,3 @@
-// SignupPage.tsx
 "use client";
 import Image from "next/image";
 import { useContext, useState } from "react";
