@@ -1,23 +1,23 @@
 "use client";
-import Image from "next/image";
 import { useContext, useState } from "react";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
 import afyaLogo from "../public/images/logoRosa.png";
 import { SignupContext } from "../contexts/SignupContext";
-import { useRouter } from "next/navigation";
 import InputField from "../components/InputField";
+import PrivacyPolicyModal from "../components/PrivacyPolicyModal";
 import { formatCpf, formatPhone, formatDate } from "../utils/formatters";
 import { checkCpfExists } from "../utils/supabase/client";
 
 const SignupPage: React.FC = () => {
   const { signupData, setSignupData } = useContext(SignupContext);
   const router = useRouter();
-
   const [errors, setErrors] = useState({
     name: "",
     cpf: "",
-    phone: "",
     email: "",
   });
+  const [isPrivacyPolicyModalOpen, setPrivacyPolicyModalOpen] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -43,7 +43,6 @@ const SignupPage: React.FC = () => {
       ...signupData,
       phone: formattedPhone,
     });
-    setErrors({ ...errors, phone: "" });
   };
 
   const handleDobChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -65,7 +64,6 @@ const SignupPage: React.FC = () => {
     return (
       signupData.cpf &&
       signupData.name &&
-      signupData.phone &&
       signupData.email &&
       signupData.privacyPolicy
     );
@@ -73,7 +71,6 @@ const SignupPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     const cpfExists = await checkCpfExists(signupData.cpf);
     if (cpfExists) {
       setErrors({ ...errors, cpf: "Este CPF já participou" });
@@ -86,7 +83,6 @@ const SignupPage: React.FC = () => {
       setErrors({
         name: signupData.name ? "" : "Este campo é obrigatório",
         cpf: signupData.cpf ? "" : "Este campo é obrigatório",
-        phone: signupData.phone ? "" : "Este campo é obrigatório",
         email: signupData.email ? "" : "Este campo é obrigatório",
       });
     }
@@ -142,7 +138,6 @@ const SignupPage: React.FC = () => {
           placeholder="(00) 00000-0000"
           maxLength={15}
           name="phone"
-          error={errors.phone}
         />
         <InputField
           id="email"
@@ -165,7 +160,12 @@ const SignupPage: React.FC = () => {
           />
           <label htmlFor="privacyPolicy" className="text-gray-400 text-lg">
             Ao informar meus dados, concordo com a{" "}
-            <u className="text-afya-pink">política de privacidade</u>
+            <u
+              className="text-afya-pink cursor-pointer"
+              onClick={() => setPrivacyPolicyModalOpen(true)}
+            >
+              política de privacidade
+            </u>
           </label>
         </div>
         <div className="flex items-center mb-10">
@@ -183,13 +183,17 @@ const SignupPage: React.FC = () => {
         </div>
         <button
           type="submit"
-          className="bg-afya-pink text-white w-fit place-self-center font-bold py-2 px-6 rounded-lg"
+          className="bg-afya-pink cursor-pointer text-2xl text-white place-self-center font-bold py-2 px-6 rounded-lg"
           disabled={!isFormValid()}
         >
           Seguinte &gt;&gt;
         </button>
       </form>
       <Image src={afyaLogo} alt="Afya Logo" />
+      <PrivacyPolicyModal
+        isOpen={isPrivacyPolicyModalOpen}
+        onClose={() => setPrivacyPolicyModalOpen(false)}
+      />
     </div>
   );
 };
