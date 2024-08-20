@@ -1,3 +1,35 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+  font-family: "SansBeanBody";
+  src: url("../app/public/fonts/SansBeamBody-Medium.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "SansBeanBody";
+  src: url("../app/public/fonts/SansBeamBody-Bold.otf") format("opentype");
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "SansBeanBody";
+  src: url("../app/public/fonts/SansBeamBody-Heavy.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "SansBeanBody";
+  src: url("../app/public/fonts/SansBeamBody-Italic.otf") format("opentype");
+  font-weight: 400;
+  font-style: italic;
+}
+
+body {
+  font-family: "SansBeanBody", sans-serif;
+}
