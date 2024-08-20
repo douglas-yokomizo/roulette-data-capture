@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/utils/supabase/client";
+import { supabase } from "@/app/utils/supabase/client";
 import "./roulette.module.css";
 
 const RoulettePage = () => {

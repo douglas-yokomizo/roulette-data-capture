@@ -33,3 +33,60 @@
 body {
   font-family: "SansBeanBody", sans-serif;
 }
+
+.relative {
+  position: relative;
+}
+
+.input-field {
+  width: 100%;
+  padding: 0.75rem 0;
+  border: none;
+  border-bottom: 1px solid #000;
+  outline: none;
+  background: transparent;
+  font-size: 1.5rem;
+}
+
+.input-field.cpf + .input-label + .input-placeholder {
+  top: 0.75rem;
+  left: 4.5rem;
+  font-size: 1.5rem;
+}
+
+.input-field.dob + .input-label + .input-placeholder {
+  top: 0.75rem;
+  left: 17rem;
+  font-size: 1.5rem;
+}
+
+.input-label {
+  position: absolute;
+  top: 0.75rem;
+  left: 0;
+  font-size: 1.5rem;
+  color: #db2777;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.input-placeholder {
+  position: absolute;
+  top: 0.75rem;
+  left: 7rem;
+  font-size: 1.5rem;
+  color: #bdbdbd;
+  transition: all 0.3s ease;
+}
+
+.input-field:focus + .input-label,
+.input-field:not(:placeholder-shown) + .input-label {
+  top: -1rem;
+  font-size: 1rem;
+  color: #db2777;
+}
+
+.input-field:focus + .input-label + .input-placeholder,
+.input-field:not(:placeholder-shown) + .input-label + .input-placeholder {
+  display: none;
+}

@@ -6,13 +6,13 @@ module.exports = {
   ],
   theme: {
     extend: {
+      backgroundImage: {
+        fade: 'url("../app/public/images/bgFade.png")',
+        rosa: 'url("../app/public/images/bgRosa.png")',
+        branco: 'url("../app/public/images/bgBranco.png")',
+      },
       colors: {
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
-        btn: {
-          background: "hsl(var(--btn-background))",
-          "background-hover": "hsl(var(--btn-background-hover))",
-        },
+        "afya-pink": "#D8005F",
       },
     },
   },

@@ -1,67 +1,14 @@
+// SignupPage.tsx
 "use client";
 import Image from "next/image";
 import { useContext } from "react";
-import afyaLogo from "../favicon.ico";
+import afyaLogo from "../public/images/logoRosa.png";
 import { SignupContext } from "../contexts/SignupContext";
 import { useRouter } from "next/navigation";
+import InputField from "../components/InputField";
+import { formatCpf, formatPhone, formatDate } from "../utils/formatters";
 
-const formatCpf = (value: string) => {
-  value = value.replace(/\D/g, "");
-  value = value.replace(/(\d{3})(\d)/, "$1.$2");
-  value = value.replace(/(\d{3})(\d)/, "$1.$2");
-  value = value.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
-  return value;
-};
-
-const formatPhone = (value: string) => {
-  value = value.replace(/\D/g, "");
-  value = value.replace(/(\d{2})(\d)/, "($1) $2");
-  value = value.replace(/(\d{5})(\d)/, "$1-$2");
-  return value;
-};
-
-interface InputFieldProps {
-  id: string;
-  label: string;
-  type: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  placeholder: string;
-  maxLength?: number;
-  name: string;
-}
-
-const InputField = ({
-  id,
-  label,
-  type,
-  value,
-  onChange,
-  placeholder,
-  maxLength,
-  name,
-}: InputFieldProps) => (
-  <div className="flex items-center mb-6 border-b-[1px] border-black">
-    <label
-      htmlFor={id}
-      className="text-pink-600 mr-2 font-bold whitespace-nowrap"
-    >
-      {label}
-    </label>
-    <input
-      id={id}
-      type={type}
-      placeholder={placeholder}
-      value={value}
-      onChange={onChange}
-      maxLength={maxLength}
-      name={name}
-      className="w-full py-2 border-gray-300 focus:outline-none  text-gray-400"
-    />
-  </div>
-);
-
-const SignupPage = () => {
+const SignupPage: React.FC = () => {
   const { signupData, setSignupData } = useContext(SignupContext);
   const router = useRouter();
 
@@ -89,6 +36,14 @@ const SignupPage = () => {
     });
   };
 
+  const handleDobChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formattedDob = formatDate(e.target.value);
+    setSignupData({
+      ...signupData,
+      dob: formattedDob,
+    });
+  };
+
   const isFormValid = () => {
     return (
       signupData.cpf &&
@@ -106,11 +61,20 @@ const SignupPage = () => {
   };
 
   return (
-    <div className="h-screen w-full flex flex-col justify-center items-center">
-      <h1 className="font-bold text-pink-600 text-center text-3xl mb-10">
+    <div className="h-screen bg-branco bg-cover bg-center w-full flex flex-col justify-center items-center">
+      <h1 className="font-bold text-afya-pink text-center text-5xl">
         Olá, seja bem-vindo. <br /> Faça seu cadastro abaixo.
       </h1>
-      <form className="flex flex-col" onSubmit={handleSubmit}>
+      <form className="flex flex-col w-[80%] my-20" onSubmit={handleSubmit}>
+        <InputField
+          id="name"
+          label="Digite seu nome"
+          type="text"
+          value={signupData.name}
+          onChange={handleChange}
+          maxLength={100}
+          name="name"
+        />
         <InputField
           id="cpf"
           label="CPF"
@@ -122,23 +86,14 @@ const SignupPage = () => {
           name="cpf"
         />
         <InputField
-          id="name"
-          label="Nome"
-          type="text"
-          value={signupData.name}
-          onChange={handleChange}
-          placeholder="Digite seu nome"
-          maxLength={100}
-          name="name"
-        />
-        <InputField
           id="dob"
           label="Data de Nascimento"
-          type="date"
+          type="text"
           value={signupData.dob}
-          onChange={handleChange}
-          placeholder="Data de nascimento"
+          onChange={handleDobChange}
           name="dob"
+          placeholder="00/00/0000"
+          maxLength={10}
         />
         <InputField
           id="phone"
@@ -156,10 +111,9 @@ const SignupPage = () => {
           type="email"
           value={signupData.email}
           onChange={handleChange}
-          placeholder="Digite seu e-mail"
           name="email"
         />
-        <div className="flex items-center mb-6">
+        <div className="flex items-center mt-10 mb-6">
           <input
             id="privacyPolicy"
             name="privacyPolicy"
@@ -168,12 +122,12 @@ const SignupPage = () => {
             onChange={handleChange}
             className="mr-2"
           />
-          <label htmlFor="privacyPolicy" className="text-gray-400">
+          <label htmlFor="privacyPolicy" className="text-gray-400 text-lg">
             Ao informar meus dados, concordo com a{" "}
-            <u className="text-pink-600">política de privacidade</u>
+            <u className="text-afya-pink">política de privacidade</u>
           </label>
         </div>
-        <div className="flex items-center mb-6">
+        <div className="flex items-center mb-10">
           <input
             id="newsletter"
             name="newsletter"
@@ -182,13 +136,13 @@ const SignupPage = () => {
             onChange={handleChange}
             className="mr-2"
           />
-          <label htmlFor="newsletter" className="text-gray-400">
+          <label htmlFor="newsletter" className="text-gray-400 text-lg">
             Aceito receber novidades e comunicações
           </label>
         </div>
         <button
           type="submit"
-          className="bg-pink-600 text-white font-bold py-2 px-4 rounded"
+          className="bg-afya-pink text-white w-fit place-self-center font-bold py-2 px-6 rounded-lg"
           disabled={!isFormValid()}
         >
           Seguinte &gt;&gt;

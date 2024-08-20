@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { supabase } from "@/utils/supabase/client";
+import { supabase } from "@/app/utils/supabase/client";
 import Image from "next/image";
 
 export default function AdminPage() {

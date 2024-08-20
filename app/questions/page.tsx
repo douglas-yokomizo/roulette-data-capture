@@ -1,7 +1,7 @@
 "use client";
 import { useContext, useState } from "react";
 import { SignupContext } from "../contexts/SignupContext";
-import { saveChoice } from "../../utils/supabase/client";
+import { saveChoice } from "../utils/supabase/client";
 import { useRouter } from "next/navigation";
 
 const Page1 = () => {
