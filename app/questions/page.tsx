@@ -1,10 +1,15 @@
 "use client";
 import { useContext, useState } from "react";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { IoLibraryOutline, IoPersonOutline } from "react-icons/io5";
+import { FaStethoscope } from "react-icons/fa";
 import { SignupContext } from "../contexts/SignupContext";
 import { saveChoice } from "../utils/supabase/client";
-import { useRouter } from "next/navigation";
+import afyaLogo from "../public/images/logoBranco.png";
+import booksIcon from "../public/icons/books.png";
 
-const Page1 = () => {
+const QuestionsPage = () => {
   const { signupData } = useContext(SignupContext);
   const [showModal, setShowModal] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -61,44 +66,79 @@ const Page1 = () => {
   };
 
   return (
-    <div className="h-screen w-full flex flex-col justify-center items-center">
-      <h1 className="font-bold text-3xl text-pink-500 mb-10">
-        Conte pra gente: em <br />
+    <div className="h-screen bg-rosa bg-center bg-cover w-full flex flex-col justify-center items-center">
+      <h1 className="font-bold text-5xl text-pink-100 mb-24">
+        Conta pra gente: em <br />
         que momento da sua <br />
         jornada você está?{" "}
       </h1>
-      <div className="flex flex-col items-center space-y-4">
+      <div className="flex flex-col text-xl items-center space-y-4">
         <div className="flex w-full space-x-4">
           <button
             onClick={() => handleSelect("Estudante")}
-            className={`flex-1 border-2 border-pink-400 font-bold p-4 rounded ${
+            className={`flex-1 border-2 border-pink-100 font-bold p-10 rounded-xl ${
               selectedOption === "Estudante"
-                ? "bg-pink-600 text-white"
-                : "text-pink-400"
+                ? "bg-afya-pink text-pink-100"
+                : "bg-pink-100 text-afya-pink"
             }`}
           >
-            Sou estudante de medicina
+            <div className="flex flex-col gap-2 items-center justify-center">
+              <div
+                className={`p-3 rounded-full ${
+                  selectedOption === "Estudante"
+                    ? "bg-pink-100 text-afya-pink"
+                    : "bg-afya-pink text-pink-100"
+                }`}
+              >
+                {" "}
+                <IoLibraryOutline size={40} />
+              </div>
+              Sou estudante de medicina
+            </div>
           </button>
           <button
             onClick={() => handleSelect("Médico")}
-            className={`flex-1 border-2 border-pink-400 font-bold p-4 rounded ${
+            className={`flex-1 border-2 border-pink-100 font-bold p-10 rounded-xl ${
               selectedOption === "Médico"
-                ? "bg-pink-600 text-white"
-                : "text-pink-400"
+                ? "bg-afya-pink text-pink-100"
+                : "bg-pink-100 text-afya-pink"
             }`}
           >
-            Sou médico
+            <div className="flex flex-col gap-2 items-center justify-center">
+              <div
+                className={`p-3 rounded-full ${
+                  selectedOption === "Médico"
+                    ? "bg-pink-100 text-afya-pink"
+                    : "bg-afya-pink text-pink-100"
+                }`}
+              >
+                <FaStethoscope size={40} />
+              </div>
+              Sou médico
+            </div>
           </button>
         </div>
         <button
           onClick={() => handleSelect("Profissional de outra área")}
-          className={`w-1/2 border-2 border-pink-400 font-bold p-4 rounded ${
+          className={`w-1/2 border-2 border-pink-100 font-bold p-10 rounded-xl ${
             selectedOption === "Profissional de outra área"
-              ? "bg-pink-600 text-white"
-              : "text-pink-400"
+              ? "bg-afya-pink text-pink-100"
+              : "bg-pink-100 text-afya-pink"
           }`}
         >
-          Profissional de outra área
+          <div className="flex flex-col gap-2 items-center justify-center">
+            <div
+              className={`p-3 rounded-full ${
+                selectedOption === "Profissional de outra área"
+                  ? "bg-pink-100 text-afya-pink"
+                  : "bg-afya-pink text-pink-100"
+              }`}
+            >
+              {" "}
+              <IoPersonOutline size={40} />
+            </div>
+            Profissional de outra área
+          </div>
         </button>
       </div>
 
@@ -108,35 +148,43 @@ const Page1 = () => {
           onClick={handleCloseModal}
         >
           <div
-            className="bg-white p-12 rounded shadow-md relative"
+            className="bg-white w-[80%] p-24 rounded-lg shadow-md relative"
             onClick={(e) => e.stopPropagation()}
           >
             <button
               onClick={handleCloseModal}
-              className="absolute top-2 right-2 text-gray-500"
+              className="absolute text-2xl top-2 right-2 text-afya-pink"
             >
               X
             </button>
-            <h2 className="text-xl text-pink-400 font-bold mb-4">
-              Em que período da jornada acadêmica você está?
+            <div className="flex justify-center">
+              <Image
+                src={booksIcon}
+                alt=""
+                width={60}
+                className="absolute top-0"
+              />
+            </div>
+            <h2 className="text-2xl text-center text-afya-pink font-semibold my-10">
+              Em que período da jornada <br /> acadêmica você está?
             </h2>
-            <div className="flex justify-center items-center space-x-4 mt-8 mb-12">
+            <div className="flex justify-center items-center space-x-4 mb-8">
               <button
                 onClick={() => handleModalSelect("1º ao 4º ano")}
-                className={`border-2 border-pink-400 font-bold py-2 px-4 rounded ${
+                className={`border-2 border-afya-pink font-bold py-4 px-8 rounded ${
                   selectedModalOption === "1º ao 4º ano"
-                    ? "bg-pink-600 text-white"
-                    : "text-pink-400"
+                    ? "bg-afya-pink text-pink-100"
+                    : "text-afya-pink"
                 }`}
               >
                 1º ao 4º ano
               </button>
               <button
                 onClick={() => handleModalSelect("5º ao 6º ano")}
-                className={`border-2 border-pink-400 font-bold py-2 px-4 rounded ${
+                className={`border-2 border-afya-pink font-bold py-4 px-8 rounded ${
                   selectedModalOption === "5º ao 6º ano"
-                    ? "bg-pink-600 text-white"
-                    : "text-pink-400"
+                    ? "bg-afya-pink text-pink-100"
+                    : "text-afya-pink"
                 }`}
               >
                 5º ao 6º ano
@@ -144,7 +192,7 @@ const Page1 = () => {
             </div>
             <button
               onClick={handleFinish}
-              className="absolute bottom-2 right-2 bg-pink-600 text-white font-bold py-2 px-4 rounded-lg"
+              className="absolute bottom-6 right-6 bg-afya-pink text-pink-100 font-bold py-2 px-4 rounded-lg"
             >
               Finalizar
             </button>
@@ -158,37 +206,44 @@ const Page1 = () => {
           onClick={handleConfirmCloseModal}
         >
           <div
-            className="bg-white p-8 rounded shadow-md relative"
+            className="bg-white p-24 rounded-lg shadow-md relative"
             onClick={(e) => e.stopPropagation()}
           >
             <button
               onClick={handleConfirmCloseModal}
-              className="absolute top-2 right-2 text-gray-500"
+              className="absolute text-2xl top-2 right-2 text-afya-pink"
             >
               X
             </button>
-            <h2 className="text-xl text-pink-400 font-bold mb-4">
+            <h2 className="text-2xl text-center text-afya-pink font-semibold mb-8">
               Confirmar escolha?
             </h2>
-            <div className="flex justify-center items-center space-x-4 mb-4">
+            <div className="flex justify-center items-center space-x-4">
               <button
                 onClick={handleConfirm}
-                className="border-2 border-pink-400 text-pink-400 font-bold py-2 px-4 rounded"
+                className="border-2 border-afya-pink text-afya-pink font-bold py-4 px-8 rounded"
               >
-                Sim
+                Confirmar
               </button>
               <button
                 onClick={handleConfirmCloseModal}
-                className="border-2 border-pink-400 bg-pink-600 text-white font-bold py-2 px-4 rounded"
+                className="border-2 border-afya-pink bg-afya-pink text-pink-100 font-bold py-4 px-8 rounded"
               >
-                Não
+                Cancelar
               </button>
             </div>
           </div>
         </div>
       )}
+      <button
+        onClick={() => router.back()}
+        className="place-self-start mt-16 mb-28 ml-56 bg-pink-100 text-afya-pink px-6 py-2 rounded-lg"
+      >
+        &lt;&lt; Voltar
+      </button>
+      <Image src={afyaLogo} alt="" width={280} />
     </div>
   );
 };
 
-export default Page1;
+export default QuestionsPage;
