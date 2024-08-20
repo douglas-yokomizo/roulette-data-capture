@@ -8,9 +8,41 @@ import InputField from "../components/InputField";
 import PrivacyPolicyModal from "../components/PrivacyPolicyModal";
 import { formatCpf, formatPhone, formatDate } from "../utils/formatters";
 import { checkCpfExists } from "../utils/supabase/client";
+import VirtualKeyboard from "../components/VirtualKeyboard";
 
 const SignupPage: React.FC = () => {
   const { signupData, setSignupData } = useContext(SignupContext);
+  const [isVirtualKeyboardVisible, setVirtualKeyboardVisible] = useState(false);
+  const [focusedInput, setFocusedInput] = useState("");
+
+  const handleInputFocus = (id: string) => {
+    setFocusedInput(id);
+    setVirtualKeyboardVisible(true);
+  };
+
+  const handleInputChange = (value: string) => {
+    let formattedValue = value;
+
+    switch (focusedInput) {
+      case "cpf":
+        formattedValue = formatCpf(value);
+        break;
+      case "phone":
+        formattedValue = formatPhone(value);
+        break;
+      case "dob":
+        formattedValue = formatDate(value);
+        break;
+      default:
+        break;
+    }
+
+    setSignupData({
+      ...signupData,
+      [focusedInput]: formattedValue,
+    });
+  };
+
   const router = useRouter();
   const [errors, setErrors] = useState({
     name: "",
@@ -53,13 +85,6 @@ const SignupPage: React.FC = () => {
     });
   };
 
-  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    if (!value) {
-      setErrors({ ...errors, [name]: "Este campo é obrigatório" });
-    }
-  };
-
   const isFormValid = () => {
     return (
       signupData.cpf &&
@@ -71,23 +96,30 @@ const SignupPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    const newErrors = {
+      name: signupData.name ? "" : "Este campo é obrigatório",
+      cpf: signupData.cpf ? "" : "Este campo é obrigatório",
+      email: signupData.email ? "" : "Este campo é obrigatório",
+    };
+
+    const hasErrors = Object.values(newErrors).some((error) => error !== "");
+
+    if (hasErrors) {
+      setErrors(newErrors);
+      return;
+    }
+
     const cpfExists = await checkCpfExists(signupData.cpf);
     if (cpfExists) {
-      setErrors({ ...errors, cpf: "Este CPF já participou" });
+      setErrors({ ...newErrors, cpf: "Este CPF já participou" });
       return;
     }
 
     if (isFormValid()) {
       router.push("/questions");
-    } else {
-      setErrors({
-        name: signupData.name ? "" : "Este campo é obrigatório",
-        cpf: signupData.cpf ? "" : "Este campo é obrigatório",
-        email: signupData.email ? "" : "Este campo é obrigatório",
-      });
     }
   };
-
   return (
     <div className="h-screen bg-branco bg-cover bg-center w-full flex flex-col justify-center items-center">
       <h1 className="font-bold text-afya-pink text-center text-5xl">
@@ -100,10 +132,10 @@ const SignupPage: React.FC = () => {
           type="text"
           value={signupData.name}
           onChange={handleChange}
-          onBlur={handleBlur}
           maxLength={100}
           name="name"
           error={errors.name}
+          onFocus={handleInputFocus}
         />
         <InputField
           id="cpf"
@@ -111,11 +143,11 @@ const SignupPage: React.FC = () => {
           type="text"
           value={signupData.cpf}
           onChange={handleCpfChange}
-          onBlur={handleBlur}
           placeholder="000.000.000-00"
           maxLength={14}
           name="cpf"
           error={errors.cpf}
+          onFocus={handleInputFocus}
         />
         <InputField
           id="dob"
@@ -123,10 +155,10 @@ const SignupPage: React.FC = () => {
           type="text"
           value={signupData.dob}
           onChange={handleDobChange}
-          onBlur={handleBlur}
           name="dob"
           placeholder="00/00/0000"
           maxLength={10}
+          onFocus={handleInputFocus}
         />
         <InputField
           id="phone"
@@ -134,10 +166,10 @@ const SignupPage: React.FC = () => {
           type="tel"
           value={signupData.phone}
           onChange={handlePhoneChange}
-          onBlur={handleBlur}
           placeholder="(00) 00000-0000"
           maxLength={15}
           name="phone"
+          onFocus={handleInputFocus}
         />
         <InputField
           id="email"
@@ -145,9 +177,9 @@ const SignupPage: React.FC = () => {
           type="email"
           value={signupData.email}
           onChange={handleChange}
-          onBlur={handleBlur}
           name="email"
           error={errors.email}
+          onFocus={handleInputFocus}
         />
         <div className="flex items-center mt-10 mb-6">
           <input
@@ -189,10 +221,19 @@ const SignupPage: React.FC = () => {
           Seguinte &gt;&gt;
         </button>
       </form>
-      <Image src={afyaLogo} alt="Afya Logo" />
+      <Image
+        src={afyaLogo}
+        alt="Afya Logo"
+        className={isVirtualKeyboardVisible ? "mb-10" : ""}
+      />
       <PrivacyPolicyModal
         isOpen={isPrivacyPolicyModalOpen}
         onClose={() => setPrivacyPolicyModalOpen(false)}
+      />
+      <VirtualKeyboard
+        isVisible={isVirtualKeyboardVisible}
+        onChange={handleInputChange}
+        focusedInput={focusedInput}
       />
     </div>
   );
