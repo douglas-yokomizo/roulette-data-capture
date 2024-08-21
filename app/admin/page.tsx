@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../utils/supabase/client";
 import Image from "next/image";
+import { FaRegTrashAlt } from "react-icons/fa";
 
 const AdminPage = () => {
   const [prizes, setPrizes] = useState<any[]>([]);
@@ -11,6 +12,8 @@ const AdminPage = () => {
   const [error, setError] = useState("");
   const [editingPrizeId, setEditingPrizeId] = useState<number | null>(null);
   const [editingPrizeName, setEditingPrizeName] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedPrizeId, setSelectedPrizeId] = useState<number | null>(null);
 
   const fetchPrizes = async () => {
     const { data, error } = await supabase.from("prizes").select("*");
@@ -106,6 +109,23 @@ const AdminPage = () => {
       );
       setEditingPrizeId(null);
       setEditingPrizeName("");
+    }
+  };
+
+  const openModal = (id: number) => {
+    setSelectedPrizeId(id);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setSelectedPrizeId(null);
+    setIsModalOpen(false);
+  };
+
+  const confirmDelete = () => {
+    if (selectedPrizeId !== null) {
+      deletePrize(selectedPrizeId);
+      closeModal();
     }
   };
 
@@ -255,15 +275,43 @@ const AdminPage = () => {
                 </button>
               )}
               <button
-                onClick={() => deletePrize(prize.id)}
-                className="py-2 px-4 rounded-lg bg-red-600 text-white hover:bg-red-700"
+                onClick={() => openModal(prize.id)}
+                className="py-2 px-4 rounded-lg text-red-500"
               >
-                Excluir
+                <FaRegTrashAlt />
               </button>
             </div>
           </li>
         ))}
       </ul>
+
+      {isModalOpen && (
+        <div
+          onClick={closeModal}
+          className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
+        >
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <h2 className="text-xl font-bold mb-4">Confirmar Exclusão</h2>
+            <p className="mb-4">
+              Você tem certeza que deseja excluir este prêmio?
+            </p>
+            <div className="flex justify-end space-x-4">
+              <button
+                onClick={closeModal}
+                className="py-2 px-4 rounded-lg bg-gray-300 hover:bg-gray-400"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="py-2 px-4 rounded-lg bg-red-600 text-white hover:bg-red-700"
+              >
+                Excluir
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
