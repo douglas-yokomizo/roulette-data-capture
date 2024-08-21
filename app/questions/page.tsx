@@ -1,6 +1,7 @@
 "use client";
 import { useContext, useState } from "react";
 import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
 import Image from "next/image";
 import { IoLibraryOutline, IoPersonOutline } from "react-icons/io5";
 import { FaStethoscope } from "react-icons/fa";
@@ -8,6 +9,26 @@ import { SignupContext } from "../contexts/SignupContext";
 import { saveChoice } from "../utils/supabase/client";
 import afyaLogo from "../public/images/logoBranco.png";
 import booksIcon from "../public/icons/books.png";
+
+const titleVariants = {
+  hidden: { y: -100, opacity: 0 },
+  visible: { y: 0, opacity: 1, transition: { duration: 1 } },
+};
+
+const buttonVariants = {
+  hidden: { scale: 0.8, opacity: 0 },
+  visible: { scale: 1, opacity: 1, transition: { duration: 0.5 } },
+};
+
+const modalVariants = {
+  hidden: { scale: 0, opacity: 0 },
+  visible: { scale: 1, opacity: 1, transition: { duration: 0.5 } },
+};
+
+const logoVariants = {
+  hidden: { y: 300, opacity: 0 },
+  visible: { y: 0, opacity: 1, transition: { duration: 1, delay: 1 } },
+};
 
 const QuestionsPage = () => {
   const { signupData } = useContext(SignupContext);
@@ -66,21 +87,29 @@ const QuestionsPage = () => {
   };
 
   return (
-    <div className="h-screen bg-rosa bg-center bg-cover w-full flex flex-col justify-center items-center">
-      <h1 className="font-bold text-5xl text-pink-100 mb-24">
+    <motion.div
+      initial="hidden"
+      animate="visible"
+      className="h-screen bg-rosa bg-center bg-cover w-full flex flex-col justify-center items-center"
+    >
+      <motion.h1
+        className="font-bold text-5xl text-pink-100 mb-24 text-center"
+        variants={titleVariants}
+      >
         Conta pra gente: em <br />
         que momento da sua <br />
         jornada você está?{" "}
-      </h1>
+      </motion.h1>
       <div className="flex flex-col text-xl items-center space-y-4">
         <div className="flex w-full space-x-4">
-          <button
+          <motion.button
             onClick={() => handleSelect("Estudante")}
             className={`flex-1 border-2 border-pink-100 font-bold p-10 rounded-xl ${
               selectedOption === "Estudante"
                 ? "bg-afya-pink text-pink-100"
                 : "bg-pink-100 text-afya-pink"
             }`}
+            variants={buttonVariants}
           >
             <div className="flex flex-col gap-2 items-center justify-center">
               <div
@@ -90,19 +119,19 @@ const QuestionsPage = () => {
                     : "bg-afya-pink text-pink-100"
                 }`}
               >
-                {" "}
                 <IoLibraryOutline size={40} />
               </div>
               Sou estudante de medicina
             </div>
-          </button>
-          <button
+          </motion.button>
+          <motion.button
             onClick={() => handleSelect("Médico")}
             className={`flex-1 border-2 border-pink-100 font-bold p-10 rounded-xl ${
               selectedOption === "Médico"
                 ? "bg-afya-pink text-pink-100"
                 : "bg-pink-100 text-afya-pink"
             }`}
+            variants={buttonVariants}
           >
             <div className="flex flex-col gap-2 items-center justify-center">
               <div
@@ -116,15 +145,16 @@ const QuestionsPage = () => {
               </div>
               Sou médico
             </div>
-          </button>
+          </motion.button>
         </div>
-        <button
+        <motion.button
           onClick={() => handleSelect("Profissional de outra área")}
           className={`w-1/2 border-2 border-pink-100 font-bold p-10 rounded-xl ${
             selectedOption === "Profissional de outra área"
               ? "bg-afya-pink text-pink-100"
               : "bg-pink-100 text-afya-pink"
           }`}
+          variants={buttonVariants}
         >
           <div className="flex flex-col gap-2 items-center justify-center">
             <div
@@ -134,18 +164,20 @@ const QuestionsPage = () => {
                   : "bg-afya-pink text-pink-100"
               }`}
             >
-              {" "}
               <IoPersonOutline size={40} />
             </div>
             Profissional de outra área
           </div>
-        </button>
+        </motion.button>
       </div>
 
       {showModal && (
-        <div
+        <motion.div
           className="fixed inset-0 flex items-center justify-center backdrop-blur-sm"
           onClick={handleCloseModal}
+          initial="hidden"
+          animate="visible"
+          variants={modalVariants}
         >
           <div
             className="bg-white w-[80%] p-24 rounded-lg shadow-md relative"
@@ -197,13 +229,16 @@ const QuestionsPage = () => {
               Finalizar
             </button>
           </div>
-        </div>
+        </motion.div>
       )}
 
       {showConfirmModal && (
-        <div
+        <motion.div
           className="fixed inset-0 flex items-center justify-center backdrop-blur-sm"
           onClick={handleConfirmCloseModal}
+          initial="hidden"
+          animate="visible"
+          variants={modalVariants}
         >
           <div
             className="bg-white p-24 rounded-lg shadow-md relative"
@@ -233,16 +268,19 @@ const QuestionsPage = () => {
               </button>
             </div>
           </div>
-        </div>
+        </motion.div>
       )}
-      <button
+      <motion.button
         onClick={() => router.back()}
         className="place-self-start mt-16 mb-28 ml-56 bg-pink-100 text-afya-pink px-6 py-2 rounded-lg"
+        variants={buttonVariants}
       >
         &lt;&lt; Voltar
-      </button>
-      <Image src={afyaLogo} alt="" width={280} />
-    </div>
+      </motion.button>
+      <motion.div variants={logoVariants}>
+        <Image src={afyaLogo} alt="Afya Logo" />
+      </motion.div>
+    </motion.div>
   );
 };
 

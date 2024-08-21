@@ -7,6 +7,7 @@ import logoRoleta from "../public/images/logoRoleta.png";
 import "./roulette.module.css";
 import Image from "next/image";
 import { SignupContext } from "../contexts/SignupContext";
+import { motion } from "framer-motion";
 
 const RoulettePage = () => {
   const [prizes, setPrizes] = useState<any[]>([]);
@@ -262,14 +263,34 @@ const RoulettePage = () => {
     requestAnimationFrame(animate);
   };
 
+  const titleVariants = {
+    hidden: { y: -300, opacity: 0 },
+    visible: { y: 0, opacity: 1, transition: { duration: 1 } },
+  };
+
+  const logoVariants = {
+    hidden: { y: 300, opacity: 0 },
+    visible: { y: 0, opacity: 1, transition: { duration: 1 } },
+  };
+
   {
     !prizes && <p>Carregando...</p>;
   }
   return (
-    <div className="flex items-center flex-col gap-6 justify-center h-screen bg-branco bg-cover bg-center">
-      <h1 className="text-5xl text-center font-semibold text-afya-pink">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 3 }}
+      className="flex items-center flex-col gap-6 justify-center h-screen bg-branco bg-cover bg-center"
+    >
+      <motion.h1
+        className="text-5xl text-center font-semibold text-afya-pink"
+        initial="hidden"
+        animate="visible"
+        variants={titleVariants}
+      >
         Toque para <br /> ganhar um brinde
-      </h1>
+      </motion.h1>
       <div className="roulette-container mb-10">
         <canvas
           ref={canvasRef}
@@ -278,8 +299,15 @@ const RoulettePage = () => {
           onClick={drawPrize}
         ></canvas>
       </div>
-      <Image src={logoAfya} alt="Logo Afya" />
-    </div>
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={logoVariants}
+        className="mt-10"
+      >
+        <Image src={logoAfya} alt="Logo Afya" />
+      </motion.div>
+    </motion.div>
   );
 };
 

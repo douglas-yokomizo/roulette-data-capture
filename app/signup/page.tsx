@@ -1,6 +1,7 @@
 "use client";
 import { useContext, useState } from "react";
 import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
 import Image from "next/image";
 import afyaLogo from "../public/images/logoRosa.png";
 import { SignupContext } from "../contexts/SignupContext";
@@ -10,6 +11,21 @@ import { formatCpf, formatPhone, formatDate } from "../utils/formatters";
 import { checkCpfExists } from "../utils/supabase/client";
 import VirtualKeyboard from "../components/VirtualKeyboard";
 import toast, { Toaster } from "react-hot-toast";
+
+const titleVariants = {
+  hidden: { y: -100, opacity: 0 },
+  visible: { y: 0, opacity: 1, transition: { duration: 1 } },
+};
+
+const formVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { duration: 1, delay: 0.5 } },
+};
+
+const logoVariants = {
+  hidden: { y: 300, opacity: 0 },
+  visible: { y: 0, opacity: 1, transition: { duration: 1, delay: 1 } },
+};
 
 const SignupPage: React.FC = () => {
   const { signupData, setSignupData } = useContext(SignupContext);
@@ -125,13 +141,25 @@ const SignupPage: React.FC = () => {
       router.push("/questions");
     }
   };
+
   return (
-    <div className="h-screen bg-branco bg-cover bg-center w-full flex flex-col justify-center items-center">
+    <motion.div
+      initial="hidden"
+      animate="visible"
+      className="h-screen bg-branco bg-cover bg-center w-full flex flex-col justify-center items-center"
+    >
       <Toaster />
-      <h1 className="font-bold text-afya-pink text-center text-5xl">
+      <motion.h1
+        className="font-bold text-afya-pink text-center text-5xl"
+        variants={titleVariants}
+      >
         Olá, seja bem-vindo. <br /> Faça seu cadastro abaixo.
-      </h1>
-      <form className="flex flex-col w-[80%] my-20" onSubmit={handleSubmit}>
+      </motion.h1>
+      <motion.form
+        className="flex flex-col w-[80%] my-20"
+        onSubmit={handleSubmit}
+        variants={formVariants}
+      >
         <InputField
           id="name"
           label="Digite seu nome"
@@ -225,12 +253,14 @@ const SignupPage: React.FC = () => {
         >
           Seguinte &gt;&gt;
         </button>
-      </form>
-      <Image
-        src={afyaLogo}
-        alt="Afya Logo"
-        className={isVirtualKeyboardVisible ? "mb-10" : ""}
-      />
+      </motion.form>
+      <motion.div variants={logoVariants}>
+        <Image
+          src={afyaLogo}
+          alt="Afya Logo"
+          className={isVirtualKeyboardVisible ? "mb-10" : ""}
+        />
+      </motion.div>
       <PrivacyPolicyModal
         isOpen={isPrivacyPolicyModalOpen}
         onClose={() => setPrivacyPolicyModalOpen(false)}
@@ -240,7 +270,7 @@ const SignupPage: React.FC = () => {
         onChange={handleInputChange}
         focusedInput={focusedInput}
       />
-    </div>
+    </motion.div>
   );
 };
 

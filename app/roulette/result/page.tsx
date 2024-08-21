@@ -1,9 +1,31 @@
 "use client";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
+import { motion } from "framer-motion";
 import logoAfya from "../../public/images/logoBranco.png";
 import { useContext } from "react";
 import { SignupContext } from "@/app/contexts/SignupContext";
+
+// Defina as animações
+const titleVariants = {
+  hidden: { y: -100, opacity: 0 },
+  visible: { y: 0, opacity: 1, transition: { duration: 1 } },
+};
+
+const listVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { duration: 1, delay: 0.5 } },
+};
+
+const buttonVariants = {
+  hidden: { scale: 0.8, opacity: 0 },
+  visible: { scale: 1, opacity: 1, transition: { duration: 0.5, delay: 1 } },
+};
+
+const logoVariants = {
+  hidden: { scale: 0.5, opacity: 0 },
+  visible: { scale: 1, opacity: 1, transition: { duration: 1, delay: 1.5 } },
+};
 
 const ResultPage = () => {
   const searchParams = useSearchParams();
@@ -20,12 +42,23 @@ const ResultPage = () => {
   const parsedPrizes = prizes ? JSON.parse(prizes as string) : [];
 
   return (
-    <div className="flex items-center flex-col bg-fade bg-center bg-cover justify-center h-screen">
+    <motion.div
+      initial="hidden"
+      animate="visible"
+      className="flex items-center flex-col bg-fade bg-center bg-cover justify-center h-screen"
+    >
       <div className="w-full">
-        <h1 className="text-6xl font-semibold text-center text-white mb-4">
-          Parabéns! <br /> Você ganhou
-        </h1>
-        <ul className="flex flex-col gap-4 p-4 w-full items-center">
+        <motion.h1
+          className="text-6xl font-semibold text-center text-white mb-4"
+          variants={titleVariants}
+        >
+          Parabéns! 🎉
+          <br /> Você ganhou
+        </motion.h1>
+        <motion.ul
+          className="flex flex-col gap-4 p-4 w-full items-center"
+          variants={listVariants}
+        >
           {parsedPrizes.map((p: string, index: number) => (
             <li
               key={index}
@@ -39,16 +72,19 @@ const ResultPage = () => {
               {p}
             </li>
           ))}
-        </ul>
+        </motion.ul>
       </div>
-      <Image src={logoAfya} alt="" width={300} className="my-10" />
-      <button
+      <motion.div variants={logoVariants}>
+        <Image src={logoAfya} alt="Logo Afya" width={300} className="my-10" />
+      </motion.div>
+      <motion.button
         onClick={handleBackToHome}
         className="bg-pink-100 text-afya-pink font-bold py-6 px-8 rounded focus:outline-none focus:shadow-outline"
+        variants={buttonVariants}
       >
         &lt;&lt; Voltar ao início
-      </button>
-    </div>
+      </motion.button>
+    </motion.div>
   );
 };
 
