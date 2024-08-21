@@ -162,23 +162,6 @@ const AdminPage = () => {
                     className="w-20 px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
-                <div>
-                  <label className="block text-gray-700 font-medium mb-1">
-                    Limite Diário
-                  </label>
-                  <input
-                    type="number"
-                    value={prize.daily_limit}
-                    onChange={(e) =>
-                      updatePrizeQuantity(
-                        prize.id,
-                        prize.quantity,
-                        Number(e.target.value)
-                      )
-                    }
-                    className="w-20 px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
               </div>
               <p
                 className={`mt-2 font-medium ${
