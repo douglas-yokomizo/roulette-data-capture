@@ -34,7 +34,7 @@ const InputField = ({
       name={name}
       className={`input-field ${name === "cpf" ? "cpf" : ""} ${
         name === "dob" ? "dob" : ""
-      }`}
+      } ${name === "name" ? "capitalize" : ""}`}
       autoComplete="off"
       onFocus={() => onFocus && onFocus(id)}
     />

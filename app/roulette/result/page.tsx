@@ -2,12 +2,20 @@
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import logoAfya from "../../public/images/logoBranco.png";
+import { useContext } from "react";
+import { SignupContext } from "@/app/contexts/SignupContext";
 
 const ResultPage = () => {
   const searchParams = useSearchParams();
   const prize = searchParams.get("prize");
   const prizes = searchParams.get("prizes");
   const router = useRouter();
+  const { resetSignupData } = useContext(SignupContext);
+
+  const handleBackToHome = () => {
+    resetSignupData();
+    router.push("/");
+  };
 
   const parsedPrizes = prizes ? JSON.parse(prizes as string) : [];
 
@@ -35,7 +43,7 @@ const ResultPage = () => {
       </div>
       <Image src={logoAfya} alt="" width={300} className="my-10" />
       <button
-        onClick={() => router.push("/")}
+        onClick={handleBackToHome}
         className="bg-pink-100 text-afya-pink font-bold py-6 px-8 rounded focus:outline-none focus:shadow-outline"
       >
         &lt;&lt; Voltar ao início

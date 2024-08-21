@@ -29,3 +29,16 @@ export const checkCpfExists = async (cpf: string) => {
 
   return data.length > 0;
 };
+
+export const saveUserPrize = async (userId: string, prize: string) => {
+  const { data, error } = await supabase
+    .from("users")
+    .update({ prize })
+    .eq("id", userId);
+
+  if (error) {
+    console.error("Error saving user prize:", error);
+  } else {
+    console.log("User prize saved successfully:", data);
+  }
+};

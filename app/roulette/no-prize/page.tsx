@@ -1,8 +1,16 @@
 "use client";
+import { SignupContext } from "@/app/contexts/SignupContext";
 import { useRouter } from "next/navigation";
+import { useContext } from "react";
 
 const NoPrizePage = () => {
   const router = useRouter();
+  const { resetSignupData } = useContext(SignupContext);
+
+  const handleBackToHome = () => {
+    resetSignupData();
+    router.push("/");
+  };
 
   return (
     <div className="h-screen flex flex-col justify-center bg-fade bg-center bg-cover items-center">
@@ -13,7 +21,7 @@ const NoPrizePage = () => {
       </h1>
       <button
         className="bg-pink-100 text-afya-pink px-6 py-5 rounded-lg font-semibold"
-        onClick={() => router.push("/")}
+        onClick={handleBackToHome}
       >
         &lt;&lt; Voltar à página inicial
       </button>

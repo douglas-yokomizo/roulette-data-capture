@@ -1,11 +1,12 @@
 "use client";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useContext } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/app/utils/supabase/client";
 import logoAfya from "../public/images/logoRosa.png";
 import logoRoleta from "../public/images/logoRoleta.png";
 import "./roulette.module.css";
 import Image from "next/image";
+import { SignupContext } from "../contexts/SignupContext";
 
 const RoulettePage = () => {
   const [prizes, setPrizes] = useState<any[]>([]);
@@ -15,6 +16,9 @@ const RoulettePage = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const router = useRouter();
   const logoRef = useRef<HTMLImageElement | null>(null);
+  const { signupData } = useContext(SignupContext);
+
+  const userCpf = signupData.cpf;
 
   const keywordMaskMap: { [key: string]: string } = {
     "premio 1": "1",
@@ -139,8 +143,8 @@ const RoulettePage = () => {
 
   const drawPrize = async () => {
     if (isSpinning) return;
-
     setIsSpinning(true);
+
     const activePrizes = prizes.filter((prize) => prize.active);
     const totalQuantity = activePrizes.reduce(
       (acc, prize) => acc + prize.quantity,
@@ -152,8 +156,6 @@ const RoulettePage = () => {
       ...prize,
       probability: prize.quantity / (totalQuantity + 1),
     }));
-    console.log(prizeProbabilities);
-    console.log(noPrizeProbability);
 
     const random = Math.random();
     let accumulated = noPrizeProbability;
@@ -192,7 +194,7 @@ const RoulettePage = () => {
   };
 
   const spinRoulette = (slot: number) => {
-    const duration = 3000;
+    const duration = 5000;
     const finalAngle = (360 / prizes.length) * slot + 360 * 5;
     const startTime = performance.now();
 
@@ -212,7 +214,38 @@ const RoulettePage = () => {
         const resultPrize =
           slot === prizes.length ? "No Prize" : prizes[slot].prize;
         const prizeNames = prizes.map((p) => p.prize);
-        setTimeout(() => {
+
+        const saveUserPrize = async (userId: number, prize: string) => {
+          const { data, error } = await supabase
+            .from("users")
+            .update({ prize })
+            .eq("id", userId);
+          if (error) {
+            console.error("Error saving user prize:", error);
+          } else {
+            console.log("User prize saved successfully:", data);
+          }
+        };
+
+        const checkCpfExists = async (cpf: string) => {
+          const { data, error } = await supabase
+            .from("users")
+            .select("id")
+            .eq("cpf", cpf)
+            .single();
+          if (error) {
+            console.error(error);
+            return null;
+          }
+          return data;
+        };
+
+        setTimeout(async () => {
+          const userData = await checkCpfExists(userCpf);
+          if (userData) {
+            await saveUserPrize(userData.id, resultPrize);
+          }
+
           if (resultPrize === "No Prize") {
             router.push("/roulette/no-prize");
           } else {

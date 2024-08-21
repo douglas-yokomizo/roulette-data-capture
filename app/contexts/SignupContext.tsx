@@ -15,6 +15,7 @@ export interface ISignupData {
 interface SignupContextProps {
   signupData: ISignupData;
   setSignupData: (data: ISignupData) => void;
+  resetSignupData: () => void;
 }
 
 const defaultSignupData: ISignupData = {
@@ -30,13 +31,20 @@ const defaultSignupData: ISignupData = {
 export const SignupContext = createContext<SignupContextProps>({
   signupData: defaultSignupData,
   setSignupData: () => {},
+  resetSignupData: () => {},
 });
 
 export const SignupProvider = ({ children }: { children: ReactNode }) => {
   const [signupData, setSignupData] = useState<ISignupData>(defaultSignupData);
 
+  const resetSignupData = () => {
+    setSignupData(defaultSignupData);
+  };
+
   return (
-    <SignupContext.Provider value={{ signupData, setSignupData }}>
+    <SignupContext.Provider
+      value={{ signupData, setSignupData, resetSignupData }}
+    >
       {children}
     </SignupContext.Provider>
   );
