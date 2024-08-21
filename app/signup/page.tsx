@@ -9,6 +9,7 @@ import PrivacyPolicyModal from "../components/PrivacyPolicyModal";
 import { formatCpf, formatPhone, formatDate } from "../utils/formatters";
 import { checkCpfExists } from "../utils/supabase/client";
 import VirtualKeyboard from "../components/VirtualKeyboard";
+import toast, { Toaster } from "react-hot-toast";
 
 const SignupPage: React.FC = () => {
   const { signupData, setSignupData } = useContext(SignupContext);
@@ -22,10 +23,14 @@ const SignupPage: React.FC = () => {
 
   const handleInputChange = (value: string) => {
     let formattedValue = value;
+    let isValid = true;
 
     switch (focusedInput) {
       case "cpf":
         formattedValue = formatCpf(value);
+        if (formattedValue === "") {
+          isValid = false;
+        }
         break;
       case "phone":
         formattedValue = formatPhone(value);
@@ -41,6 +46,7 @@ const SignupPage: React.FC = () => {
       ...signupData,
       [focusedInput]: formattedValue,
     });
+    return isValid;
   };
 
   const router = useRouter();
@@ -57,7 +63,6 @@ const SignupPage: React.FC = () => {
       ...signupData,
       [name]: type === "checkbox" ? checked : value,
     });
-    setErrors({ ...errors, [name]: "" });
   };
 
   const handleCpfChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -112,7 +117,7 @@ const SignupPage: React.FC = () => {
 
     const cpfExists = await checkCpfExists(signupData.cpf);
     if (cpfExists) {
-      setErrors({ ...newErrors, cpf: "Este CPF já participou" });
+      toast.error("Este CPF já participou");
       return;
     }
 
@@ -122,6 +127,7 @@ const SignupPage: React.FC = () => {
   };
   return (
     <div className="h-screen bg-branco bg-cover bg-center w-full flex flex-col justify-center items-center">
+      <Toaster />
       <h1 className="font-bold text-afya-pink text-center text-5xl">
         Olá, seja bem-vindo. <br /> Faça seu cadastro abaixo.
       </h1>
@@ -216,7 +222,6 @@ const SignupPage: React.FC = () => {
         <button
           type="submit"
           className="bg-afya-pink cursor-pointer text-2xl text-white place-self-center font-bold py-2 px-6 rounded-lg"
-          disabled={!isFormValid()}
         >
           Seguinte &gt;&gt;
         </button>

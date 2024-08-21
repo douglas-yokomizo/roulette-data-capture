@@ -36,7 +36,11 @@ const VirtualKeyboard = ({
       phone: 11,
     };
 
-    if (focusedInput && inputValue.length >= maxLengths[focusedInput]) {
+    if (
+      focusedInput &&
+      inputValue.length >= maxLengths[focusedInput] &&
+      key !== "backspace"
+    ) {
       return;
     }
 
@@ -70,9 +74,16 @@ const VirtualKeyboard = ({
           newValue += key;
       }
     }
-    setInputValue(newValue);
-    onChange(newValue);
+
+    const isValid = onChange(newValue);
+    //@ts-ignore
+    if (!isValid) {
+      setInputValue("");
+    } else {
+      setInputValue(newValue);
+    }
   };
+
   const keysRow1 = "1234567890-@";
   const keysRow2 = "qwertyuiop´";
   const keysRow3 = "asdfghjklç~";
