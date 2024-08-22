@@ -3,7 +3,7 @@ import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import logoAfya from "../../public/images/logoBranco.png";
-import { useContext } from "react";
+import { useContext, Suspense } from "react";
 import { SignupContext } from "@/app/contexts/SignupContext";
 
 // Defina as animações
@@ -88,4 +88,10 @@ const ResultPage = () => {
   );
 };
 
-export default ResultPage;
+const SuspenseWrapper = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <ResultPage />
+  </Suspense>
+);
+
+export default SuspenseWrapper;
