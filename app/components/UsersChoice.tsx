@@ -38,7 +38,7 @@ const UsersChoice = () => {
   const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#D8005F"];
 
   return (
-    <div className="bg-white shadow-md rounded-lg p-6">
+    <div className="bg-white shadow-md rounded-lg p-6 pb-16">
       <h2 className="text-xl font-semibold mb-4">Momento da jornada</h2>
       <ResponsiveContainer width="100%" height={300}>
         <PieChart>

@@ -18,10 +18,10 @@ const Dashboard = () => {
         <NewsletterSubscribers />
       </div>
       <div className="flex gap-6">
-        <div className="w-2/3">
+        <div className="w-3/5">
           <UserAges />
         </div>
-        <div className="w-1/3">
+        <div className="w-2/5 h-80">
           <UsersChoice />
         </div>
       </div>
