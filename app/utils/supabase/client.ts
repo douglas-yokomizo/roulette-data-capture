@@ -46,7 +46,7 @@ export const saveUserPrize = async (userId: string, prize: string) => {
 export const fetchUsersData = async () => {
   const { data, error } = await supabase
     .from("users")
-    .select("id, dob, newsletter");
+    .select("id, dob, newsletter, choice");
   if (error) {
     console.error(error);
     return [];
