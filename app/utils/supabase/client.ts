@@ -42,3 +42,14 @@ export const saveUserPrize = async (userId: string, prize: string) => {
     console.log("User prize saved successfully:", data);
   }
 };
+
+export const fetchUsersData = async () => {
+  const { data, error } = await supabase
+    .from("users")
+    .select("id, dob, newsletter");
+  if (error) {
+    console.error(error);
+    return [];
+  }
+  return data;
+};

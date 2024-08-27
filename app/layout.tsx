@@ -1,4 +1,3 @@
-import { GeistSans } from "geist/font/sans";
 import "./globals.css";
 import { SignupProvider } from "./contexts/SignupContext";
 
@@ -19,7 +18,7 @@ export default function RootLayout({
 }) {
   return (
     <SignupProvider>
-      <html lang="en" className={GeistSans.className}>
+      <html lang="en">
         <body>
           <main>{children}</main>
         </body>
