@@ -33,7 +33,7 @@ const NoPrizePage = () => {
         className="font-bold text-5xl text-center text-pink-100 mb-24"
         variants={titleVariants}
       >
-        Não foi dessa vez 😿
+        Não foi dessa vez
         <br />
         Obrigado por participar!
       </motion.h1>

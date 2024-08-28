@@ -52,8 +52,8 @@ const ResultPage = () => {
           className="text-6xl font-semibold text-center text-white mb-4"
           variants={titleVariants}
         >
-          Parabéns! 🎉
-          <br /> Você ganhou
+          Parabéns
+          <br /> Você ganhou:
         </motion.h1>
         <motion.ul
           className="flex flex-col gap-4 p-4 w-full items-center"

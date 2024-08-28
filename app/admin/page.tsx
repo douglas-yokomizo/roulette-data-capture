@@ -170,22 +170,6 @@ const AdminPage = () => {
             />
           </div>
 
-          <div className="mb-4">
-            <label
-              className="block text-gray-700 font-medium mb-2"
-              htmlFor="image_url"
-            >
-              URL da Imagem
-            </label>
-            <input
-              id="image_url"
-              type="text"
-              placeholder="URL da Imagem"
-              value={imageUrl}
-              onChange={(e) => setImageUrl(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
           <button
             type="submit"
             className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -242,13 +226,6 @@ const AdminPage = () => {
               </p>
             </div>
             <div className="flex items-center space-x-4">
-              <Image
-                src={prize.image_url}
-                alt={prize.prize}
-                className="w-16 h-16 rounded-lg"
-                width={64}
-                height={64}
-              />
               <button
                 onClick={() => togglePrizeActive(prize.id, prize.active)}
                 className={`py-2 px-4 rounded-lg text-white ${

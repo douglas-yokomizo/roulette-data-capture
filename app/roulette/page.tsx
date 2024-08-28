@@ -22,9 +22,9 @@ const RoulettePage = () => {
   const userCpf = signupData.cpf;
 
   const keywordMaskMap: { [key: string]: string } = {
-    "premio 1": "1",
-    "premio 2": "2",
-    "premio 3": "3",
+    "Necessaire Afya": "1",
+    "Caneta Afya": "2",
+    "Copo Afya": "3",
     "Não foi dessa vez": "4",
   };
 
