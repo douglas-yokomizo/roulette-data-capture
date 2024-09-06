@@ -1,14 +1,12 @@
 "use client";
 import { useEffect, useState } from "react";
 import { supabase } from "../utils/supabase/client";
-import Image from "next/image";
 import { FaRegTrashAlt } from "react-icons/fa";
 
 const AdminPage = () => {
   const [prizes, setPrizes] = useState<any[]>([]);
   const [prize, setPrize] = useState("");
   const [quantity, setQuantity] = useState(0);
-  const [imageUrl, setImageUrl] = useState("");
   const [error, setError] = useState("");
   const [editingPrizeId, setEditingPrizeId] = useState<number | null>(null);
   const [editingPrizeName, setEditingPrizeName] = useState("");
@@ -36,17 +34,15 @@ const AdminPage = () => {
       {
         prize,
         quantity,
-        image_url: imageUrl,
         active: true,
       },
     ]);
     if (error) console.error(error);
     else {
       console.log("Prize inserted:", data);
-      fetchPrizes(); // Atualiza a lista de prêmios após a inserção
+      fetchPrizes();
       setPrize("");
       setQuantity(0);
-      setImageUrl("");
     }
   };
 

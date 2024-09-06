@@ -5,8 +5,8 @@ import { motion } from "framer-motion";
 import logoAfya from "../../public/images/logoBranco.png";
 import { useContext, Suspense } from "react";
 import { SignupContext } from "@/app/contexts/SignupContext";
+import qrCodeImage from "../../public/images/qrCode.jpeg";
 
-// Defina as animações
 const titleVariants = {
   hidden: { y: -100, opacity: 0 },
   visible: { y: 0, opacity: 1, transition: { duration: 1 } },
@@ -68,12 +68,24 @@ const ResultPage = () => {
                   : "text-pink-100 bg-afya-pink"
               }`}
             >
-              <span className="text-5xl">{index + 1}</span>
               {p}
             </li>
           ))}
         </motion.ul>
       </div>
+      {prize === "Curso Afya" && (
+        <motion.div className="qr-code-container" variants={logoVariants}>
+          <h2 className="text-4xl font-bold text-center text-white mb-4">
+            Escaneie o QR Code abaixo para acessar o Curso Afya!
+          </h2>
+          <Image
+            src={qrCodeImage}
+            alt="QR Code Curso Afya"
+            width={300}
+            height={300}
+          />
+        </motion.div>
+      )}
       <motion.div variants={logoVariants}>
         <Image src={logoAfya} alt="Logo Afya" width={300} className="my-10" />
       </motion.div>

@@ -10,7 +10,7 @@ import { SignupContext } from "../contexts/SignupContext";
 import { motion } from "framer-motion";
 
 const RoulettePage = () => {
-  const [prizes, setPrizes] = useState<any[]>([]);
+  const [prizes, setPrizes] = useState<any[]>(["Curso Afya"]);
   const [angle, setAngle] = useState(0);
   const [isSpinning, setIsSpinning] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState<number | null>(null);
@@ -22,10 +22,11 @@ const RoulettePage = () => {
   const userCpf = signupData.cpf;
 
   const keywordMaskMap: { [key: string]: string } = {
-    "Necessaire Afya": "1",
-    "Caneta Afya": "2",
+    "Bloco de Anotação Afya": "1",
+    "Necessaire Afya": "2",
     "Copo Afya": "3",
-    "Não foi dessa vez": "4",
+    "Curso Afya": "4",
+    "Brinde Surpresa": "5",
   };
 
   const getPrizeMask = (prize: string) => {
@@ -70,7 +71,7 @@ const RoulettePage = () => {
 
     const extendedPrizes = [
       ...prizes,
-      { prize: "Não foi dessa vez", active: true, quantity: 1 },
+      { prize: "Curso Afya", active: true, quantity: 1 },
     ];
     let numSlices = extendedPrizes.length;
 
@@ -114,7 +115,7 @@ const RoulettePage = () => {
       ctx.fillStyle = fillStyle === "#D8005F" ? "#fce7f3" : "#D8005F";
       ctx.font = "80px SansBeanBody";
       const prizeText = getPrizeMask(
-        extendedPrizes[i % extendedPrizes.length]?.prize || "No Prize"
+        extendedPrizes[i % extendedPrizes.length]?.prize || "Curso Afya"
       );
       ctx.fillText(prizeText, radius - 30, 10);
       ctx.restore();
@@ -213,7 +214,7 @@ const RoulettePage = () => {
         setHighlightedIndex(slot);
 
         const resultPrize =
-          slot === prizes.length ? "No Prize" : prizes[slot].prize;
+          slot === prizes.length ? "Curso Afya" : prizes[slot].prize;
         const prizeNames = prizes.map((p) => p.prize);
 
         const saveUserPrize = async (userId: number, prize: string) => {
@@ -247,8 +248,8 @@ const RoulettePage = () => {
             await saveUserPrize(userData.id, resultPrize);
           }
 
-          if (resultPrize === "No Prize") {
-            router.push("/roulette/no-prize");
+          if (resultPrize === "Curso Afya") {
+            router.push("/roulette/course-afya");
           } else {
             router.push(
               `/roulette/result?prize=${resultPrize}&prizes=${JSON.stringify(
