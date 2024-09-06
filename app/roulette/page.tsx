@@ -10,7 +10,9 @@ import { SignupContext } from "../contexts/SignupContext";
 import { motion } from "framer-motion";
 
 const RoulettePage = () => {
-  const [prizes, setPrizes] = useState<any[]>(["Curso Afya"]);
+  const [prizes, setPrizes] = useState<any[]>([
+    { prize: "Curso Afya", active: true, quantity: Infinity },
+  ]);
   const [angle, setAngle] = useState(0);
   const [isSpinning, setIsSpinning] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState<number | null>(null);
@@ -149,48 +151,46 @@ const RoulettePage = () => {
 
     const activePrizes = prizes.filter((prize) => prize.active);
     const totalQuantity = activePrizes.reduce(
-      (acc, prize) => acc + prize.quantity,
+      (acc, prize) => acc + (prize.quantity === Infinity ? 1 : prize.quantity),
       0
     );
 
-    const noPrizeProbability = totalQuantity > 0 ? 1 / (totalQuantity + 1) : 1;
     const prizeProbabilities = activePrizes.map((prize) => ({
       ...prize,
-      probability: prize.quantity / (totalQuantity + 1),
+      probability:
+        prize.quantity === Infinity
+          ? 1 / (totalQuantity + 1)
+          : prize.quantity / (totalQuantity + 1),
     }));
 
-    const random = Math.random();
-    let accumulated = noPrizeProbability;
+    // console.log("Prize Probabilities:", prizeProbabilities);
 
-    if (random < accumulated) {
-      spinRoulette(prizes.length);
-    } else {
-      for (let i = 0; i < prizeProbabilities.length; i++) {
-        accumulated += prizeProbabilities[i].probability;
-        if (random < accumulated) {
-          const drawnPrize = prizeProbabilities[i];
-          if (drawnPrize.quantity > 0) {
-            const { data, error } = await supabase
-              .from("prizes")
-              .update({ quantity: drawnPrize.quantity - 1 })
-              .eq("id", drawnPrize.id);
-            if (error) {
-              console.error(error);
-            } else {
-              setPrizes((prevPrizes) =>
-                prevPrizes.map((p) =>
-                  p.id === drawnPrize.id
-                    ? { ...p, quantity: p.quantity - 1 }
-                    : p
-                )
-              );
-              spinRoulette(i);
-            }
+    const random = Math.random();
+    let accumulated = 0;
+
+    for (let i = 0; i < prizeProbabilities.length; i++) {
+      accumulated += prizeProbabilities[i].probability;
+      if (random < accumulated) {
+        const drawnPrize = prizeProbabilities[i];
+        if (drawnPrize.quantity !== Infinity && drawnPrize.quantity > 0) {
+          const { data, error } = await supabase
+            .from("prizes")
+            .update({ quantity: drawnPrize.quantity - 1 })
+            .eq("id", drawnPrize.id);
+          if (error) {
+            console.error(error);
           } else {
-            spinRoulette(prizes.length);
+            setPrizes((prevPrizes) =>
+              prevPrizes.map((p) =>
+                p.id === drawnPrize.id ? { ...p, quantity: p.quantity - 1 } : p
+              )
+            );
+            spinRoulette(i);
           }
-          break;
+        } else {
+          spinRoulette(i);
         }
+        break;
       }
     }
   };
@@ -213,8 +213,7 @@ const RoulettePage = () => {
         setIsSpinning(false);
         setHighlightedIndex(slot);
 
-        const resultPrize =
-          slot === prizes.length ? "Curso Afya" : prizes[slot].prize;
+        const resultPrize = prizes[slot].prize;
         const prizeNames = prizes.map((p) => p.prize);
 
         const saveUserPrize = async (userId: number, prize: string) => {
