@@ -1,11 +1,10 @@
 "use client";
-import Image from "next/image";
-import { useRouter, useSearchParams } from "next/navigation";
-import { motion } from "framer-motion";
-import logoAfya from "../../public/images/logoBranco.png";
-import { useContext, Suspense } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+import { useContext, useEffect, Suspense } from "react";
 import { SignupContext } from "@/app/contexts/SignupContext";
-import qrCodeImage from "../../public/images/qrCode.jpeg";
+import { motion } from "framer-motion";
+import Image from "next/image";
+import logoAfya from "../../public/images/logoBranco.png";
 
 const titleVariants = {
   hidden: { y: -100, opacity: 0 },
@@ -34,6 +33,15 @@ const ResultPage = () => {
   const router = useRouter();
   const { resetSignupData } = useContext(SignupContext);
 
+  useEffect(() => {
+    if (prize === "Curso Afya") {
+      const timer = setTimeout(() => {
+        router.push("/roulette/course-afya");
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [prize, router]);
+
   const handleBackToHome = () => {
     resetSignupData();
     router.push("/");
@@ -59,33 +67,22 @@ const ResultPage = () => {
           className="flex flex-col gap-4 p-4 w-full items-center"
           variants={listVariants}
         >
-          {parsedPrizes.map((p: string, index: number) => (
-            <li
-              key={index}
-              className={`flex gap-4 items-center text-2xl mb-2 w-3/5 py-6 px-8 border rounded-xl ${
-                p === prize
-                  ? "bg-pink-100 text-afya-pink"
-                  : "text-pink-100 bg-afya-pink"
-              }`}
-            >
-              {p}
-            </li>
-          ))}
+          {parsedPrizes.map(
+            (p: { id: number; prize: string }, index: number) => (
+              <li
+                key={index}
+                className={`flex gap-4 items-center text-2xl mb-2 w-3/5 py-6 px-8 border rounded-xl ${
+                  p.prize === prize
+                    ? "bg-pink-100 text-afya-pink"
+                    : "text-pink-100 bg-afya-pink"
+                }`}
+              >
+                {p.id}. {p.prize}
+              </li>
+            )
+          )}
         </motion.ul>
       </div>
-      {prize === "Curso Afya" && (
-        <motion.div className="qr-code-container" variants={logoVariants}>
-          <h2 className="text-4xl font-bold text-center text-white mb-4">
-            Escaneie o QR Code abaixo para acessar o Curso Afya!
-          </h2>
-          <Image
-            src={qrCodeImage}
-            alt="QR Code Curso Afya"
-            width={300}
-            height={300}
-          />
-        </motion.div>
-      )}
       <motion.div variants={logoVariants}>
         <Image src={logoAfya} alt="Logo Afya" width={300} className="my-10" />
       </motion.div>

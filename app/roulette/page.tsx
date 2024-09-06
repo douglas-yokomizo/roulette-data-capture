@@ -10,9 +10,8 @@ import { SignupContext } from "../contexts/SignupContext";
 import { motion } from "framer-motion";
 
 const RoulettePage = () => {
-  const [prizes, setPrizes] = useState<any[]>([
-    { prize: "Curso Afya", active: true, quantity: Infinity },
-  ]);
+  const [activePrizes, setActivePrizes] = useState<any[]>([]);
+  const [allPrizes, setAllPrizes] = useState<any[]>([{ prize: "Curso Afya" }]);
   const [angle, setAngle] = useState(0);
   const [isSpinning, setIsSpinning] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState<number | null>(null);
@@ -23,29 +22,18 @@ const RoulettePage = () => {
 
   const userCpf = signupData.cpf;
 
-  const keywordMaskMap: { [key: string]: string } = {
-    "Bloco de Anotação Afya": "1",
-    "Necessaire Afya": "2",
-    "Copo Afya": "3",
-    "Curso Afya": "4",
-    "Brinde Surpresa": "5",
-  };
-
-  const getPrizeMask = (prize: string) => {
-    const normalizedPrize = prize.toLowerCase();
-    for (const keyword in keywordMaskMap) {
-      if (normalizedPrize.includes(keyword.toLowerCase())) {
-        return keywordMaskMap[keyword];
-      }
-    }
-    return prize;
-  };
-
   useEffect(() => {
     const fetchPrizes = async () => {
       const { data, error } = await supabase.from("prizes").select("*");
-      if (error) console.error(error);
-      else setPrizes(data);
+      if (error) {
+        console.error(error);
+      } else {
+        setAllPrizes(data);
+        const filteredPrizes = data.filter(
+          (prize) => prize.active && prize.quantity > 0
+        );
+        setActivePrizes(filteredPrizes);
+      }
     };
     fetchPrizes();
   }, []);
@@ -54,7 +42,7 @@ const RoulettePage = () => {
     if (canvasRef.current) {
       drawRoulette();
     }
-  }, [prizes, angle, highlightedIndex]);
+  }, [allPrizes, angle, highlightedIndex]);
 
   useEffect(() => {
     const img = document.createElement("img");
@@ -71,16 +59,7 @@ const RoulettePage = () => {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const extendedPrizes = [
-      ...prizes,
-      { prize: "Curso Afya", active: true, quantity: 1 },
-    ];
-    let numSlices = extendedPrizes.length;
-
-    if (numSlices <= 4 || numSlices % 2 !== 0) {
-      numSlices *= 2;
-    }
-
+    const numSlices = allPrizes.length * 2;
     const sliceAngle = (2 * Math.PI) / numSlices;
     const radius = canvas.width / 2;
     const centerX = canvas.width / 2;
@@ -116,10 +95,8 @@ const RoulettePage = () => {
       ctx.textAlign = "right";
       ctx.fillStyle = fillStyle === "#D8005F" ? "#fce7f3" : "#D8005F";
       ctx.font = "80px SansBeanBody";
-      const prizeText = getPrizeMask(
-        extendedPrizes[i % extendedPrizes.length]?.prize || "Curso Afya"
-      );
-      ctx.fillText(prizeText, radius - 30, 10);
+      const prizeId = allPrizes[i % allPrizes.length]?.id;
+      ctx.fillText(prizeId?.toString(), radius - 30, 10);
       ctx.restore();
     }
 
@@ -149,55 +126,32 @@ const RoulettePage = () => {
     if (isSpinning) return;
     setIsSpinning(true);
 
-    const activePrizes = prizes.filter((prize) => prize.active);
-    const totalQuantity = activePrizes.reduce(
-      (acc, prize) => acc + (prize.quantity === Infinity ? 1 : prize.quantity),
-      0
-    );
+    const randomIndex = Math.floor(Math.random() * activePrizes.length);
+    const drawnPrize = activePrizes[randomIndex];
 
-    const prizeProbabilities = activePrizes.map((prize) => ({
-      ...prize,
-      probability:
-        prize.quantity === Infinity
-          ? 1 / (totalQuantity + 1)
-          : prize.quantity / (totalQuantity + 1),
-    }));
-
-    // console.log("Prize Probabilities:", prizeProbabilities);
-
-    const random = Math.random();
-    let accumulated = 0;
-
-    for (let i = 0; i < prizeProbabilities.length; i++) {
-      accumulated += prizeProbabilities[i].probability;
-      if (random < accumulated) {
-        const drawnPrize = prizeProbabilities[i];
-        if (drawnPrize.quantity !== Infinity && drawnPrize.quantity > 0) {
-          const { data, error } = await supabase
-            .from("prizes")
-            .update({ quantity: drawnPrize.quantity - 1 })
-            .eq("id", drawnPrize.id);
-          if (error) {
-            console.error(error);
-          } else {
-            setPrizes((prevPrizes) =>
-              prevPrizes.map((p) =>
-                p.id === drawnPrize.id ? { ...p, quantity: p.quantity - 1 } : p
-              )
-            );
-            spinRoulette(i);
-          }
-        } else {
-          spinRoulette(i);
-        }
-        break;
+    if (drawnPrize.quantity !== Infinity && drawnPrize.quantity > 0) {
+      const { data, error } = await supabase
+        .from("prizes")
+        .update({ quantity: drawnPrize.quantity - 1 })
+        .eq("id", drawnPrize.id);
+      if (error) {
+        console.error(error);
+      } else {
+        setAllPrizes((prevPrizes) =>
+          prevPrizes.map((p) =>
+            p.id === drawnPrize.id ? { ...p, quantity: p.quantity - 1 } : p
+          )
+        );
+        spinRoulette(allPrizes.findIndex((p) => p.id === drawnPrize.id));
       }
+    } else {
+      spinRoulette(allPrizes.findIndex((p) => p.id === drawnPrize.id));
     }
   };
 
   const spinRoulette = (slot: number) => {
     const duration = 5000;
-    const finalAngle = (360 / prizes.length) * slot + 360 * 5;
+    const finalAngle = (360 / allPrizes.length) * slot + 360 * 5;
     const startTime = performance.now();
 
     const animate = (currentTime: number) => {
@@ -213,8 +167,8 @@ const RoulettePage = () => {
         setIsSpinning(false);
         setHighlightedIndex(slot);
 
-        const resultPrize = prizes[slot].prize;
-        const prizeNames = prizes.map((p) => p.prize);
+        const resultPrize = allPrizes[slot].prize;
+        const sortedPrizes = allPrizes.sort((a, b) => a.id - b.id);
 
         const saveUserPrize = async (userId: number, prize: string) => {
           const { data, error } = await supabase
@@ -247,15 +201,11 @@ const RoulettePage = () => {
             await saveUserPrize(userData.id, resultPrize);
           }
 
-          if (resultPrize === "Curso Afya") {
-            router.push("/roulette/course-afya");
-          } else {
-            router.push(
-              `/roulette/result?prize=${resultPrize}&prizes=${JSON.stringify(
-                prizeNames
-              )}`
-            );
-          }
+          router.push(
+            `/roulette/result?prize=${resultPrize}&prizes=${JSON.stringify(
+              sortedPrizes
+            )}&index=${slot}`
+          );
         }, 2000);
       }
     };
@@ -274,7 +224,7 @@ const RoulettePage = () => {
   };
 
   {
-    !prizes && <p>Carregando...</p>;
+    !allPrizes && <p>Carregando...</p>;
   }
   return (
     <motion.div
