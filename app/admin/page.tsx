@@ -47,6 +47,11 @@ const AdminPage = () => {
   };
 
   const togglePrizeActive = async (id: number, currentStatus: boolean) => {
+    if (currentStatus && prizes.filter((p) => p.active).length === 1) {
+      setError("Pelo menos um prêmio deve estar ativo.");
+      return;
+    }
+
     const { data, error } = await supabase
       .from("prizes")
       .update({ active: !currentStatus })
@@ -124,7 +129,6 @@ const AdminPage = () => {
       closeModal();
     }
   };
-
   return (
     <div className="p-6 max-w-4xl mx-auto">
       <div className="bg-white shadow-lg rounded-lg p-6 mb-6">
