@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../utils/supabase/client";
 import { FaRegTrashAlt } from "react-icons/fa";
+import ErrorModal from "../components/ErrorModal";
 
 const AdminPage = () => {
   const [prizes, setPrizes] = useState<any[]>([]);
@@ -12,6 +13,7 @@ const AdminPage = () => {
   const [editingPrizeName, setEditingPrizeName] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPrizeId, setSelectedPrizeId] = useState<number | null>(null);
+  const [isErrorModalOpen, setIsErrorModalOpen] = useState(false); // State for error modal
 
   const fetchPrizes = async () => {
     const { data, error } = await supabase.from("prizes").select("*");
@@ -49,6 +51,7 @@ const AdminPage = () => {
   const togglePrizeActive = async (id: number, currentStatus: boolean) => {
     if (currentStatus && prizes.filter((p) => p.active).length === 1) {
       setError("Pelo menos um prêmio deve estar ativo.");
+      setIsErrorModalOpen(true); // Show error modal
       return;
     }
 
@@ -129,6 +132,7 @@ const AdminPage = () => {
       closeModal();
     }
   };
+
   return (
     <div className="p-6 max-w-4xl mx-auto">
       <div className="bg-white shadow-lg rounded-lg p-6 mb-6">
@@ -151,7 +155,6 @@ const AdminPage = () => {
               onChange={(e) => setPrize(e.target.value)}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-            {error && <p className="text-red-600 text-sm mt-2">{error}</p>}
           </div>
           <div className="mb-4">
             <label
@@ -288,6 +291,13 @@ const AdminPage = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {isErrorModalOpen && (
+        <ErrorModal
+          message={error}
+          onClose={() => setIsErrorModalOpen(false)}
+        />
       )}
     </div>
   );
