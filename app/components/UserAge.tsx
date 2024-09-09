@@ -12,10 +12,12 @@ import {
 } from "recharts";
 
 const UserAges = () => {
-  const [ageGroups, setAgeGroups] = useState<{ name: string; count: number }[]>(
-    []
-  );
-  const [allAges, setAllAges] = useState<{ name: string; count: number }[]>([]);
+  const [ageGroups, setAgeGroups] = useState<
+    { name: string; quantidade: number }[]
+  >([]);
+  const [allAges, setAllAges] = useState<
+    { name: string; quantidade: number }[]
+  >([]);
   const [viewMode, setViewMode] = useState("grouped");
 
   useEffect(() => {
@@ -36,12 +38,12 @@ const UserAges = () => {
 
       const ageGroupsArray = Object.keys(ageCounts).map((group) => ({
         name: group,
-        count: ageCounts[group],
+        quantidade: ageCounts[group],
       }));
 
       const allAgesArray = Object.keys(individualAges).map((age) => ({
         name: age,
-        count: individualAges[age],
+        quantidade: individualAges[age],
       }));
 
       setAgeGroups(ageGroupsArray);
@@ -78,7 +80,7 @@ const UserAges = () => {
           <YAxis />
           <Tooltip />
           <Legend />
-          <Bar dataKey="count" fill="#D8005F" />
+          <Bar dataKey="quantidade" fill="#D8005F" />
         </BarChart>
       </ResponsiveContainer>
     </div>
