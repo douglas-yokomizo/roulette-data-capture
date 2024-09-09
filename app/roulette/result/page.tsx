@@ -86,13 +86,15 @@ const ResultPage = () => {
       <motion.div variants={logoVariants}>
         <Image src={logoAfya} alt="Logo Afya" width={300} className="my-10" />
       </motion.div>
-      <motion.button
-        onClick={handleBackToHome}
-        className="bg-pink-100 text-afya-pink font-bold py-6 px-8 rounded focus:outline-none focus:shadow-outline"
-        variants={buttonVariants}
-      >
-        &lt;&lt; Voltar ao início
-      </motion.button>
+      {prize !== "Curso Afya" && (
+        <motion.button
+          onClick={handleBackToHome}
+          className="bg-pink-100 text-afya-pink font-bold py-6 px-8 rounded focus:outline-none focus:shadow-outline"
+          variants={buttonVariants}
+        >
+          &lt;&lt; Voltar ao início
+        </motion.button>
+      )}
     </motion.div>
   );
 };
