@@ -36,6 +36,10 @@ const VirtualKeyboard = ({
       phone: 11,
     };
 
+    if (["cpf", "dob", "phone"].includes(focusedInput) && !/^\d$/.test(key)) {
+      return;
+    }
+
     if (
       focusedInput &&
       inputValue.length >= maxLengths[focusedInput] &&

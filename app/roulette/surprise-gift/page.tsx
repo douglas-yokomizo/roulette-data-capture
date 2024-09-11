@@ -1,13 +1,13 @@
 "use client";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import qrCodeImage from "../../public/images/qrCode.jpeg";
+import qrCodeBrinde from "../../public/images/qrCodeBrinde.png";
 import logoAfya from "../../public/images/logoBranco.png";
 import { useRouter } from "next/navigation";
 import { useContext } from "react";
 import { SignupContext } from "@/app/contexts/SignupContext";
 
-const CursoAfyaPage = () => {
+const SupriseGiftPage = () => {
   const { resetSignupData } = useContext(SignupContext);
   const router = useRouter();
 
@@ -30,7 +30,7 @@ const CursoAfyaPage = () => {
         }}
       >
         Parabéns!
-        <br /> Você ganhou um Curso Afya.
+        <br /> Você ganhou um Brinde Surpresa Afya.
       </motion.h1>
       <motion.div
         className="flex flex-col items-center mt-5 mb-10"
@@ -43,7 +43,7 @@ const CursoAfyaPage = () => {
           Escaneie o QR Code abaixo para acessar o Curso Afya.
         </h2>
         <Image
-          src={qrCodeImage}
+          src={qrCodeBrinde}
           alt="QR Code Curso Afya"
           width={300}
           height={300}
@@ -72,4 +72,4 @@ const CursoAfyaPage = () => {
   );
 };
 
-export default CursoAfyaPage;
+export default SupriseGiftPage;

@@ -39,6 +39,11 @@ const ResultPage = () => {
         router.push("/roulette/course-afya");
       }, 5000);
       return () => clearTimeout(timer);
+    } else if (prize === "Brinde Surpresa") {
+      const timer = setTimeout(() => {
+        router.push("/roulette/surprise-gift");
+      }, 5000);
+      return () => clearTimeout(timer);
     }
   }, [prize, router]);
 
@@ -86,7 +91,7 @@ const ResultPage = () => {
       <motion.div variants={logoVariants}>
         <Image src={logoAfya} alt="Logo Afya" width={300} className="my-10" />
       </motion.div>
-      {prize !== "Curso Afya" && (
+      {prize !== "Curso Afya" && prize !== "Brinde Surpresa" && (
         <motion.button
           onClick={handleBackToHome}
           className="bg-pink-100 text-afya-pink font-bold py-6 px-8 rounded focus:outline-none focus:shadow-outline"

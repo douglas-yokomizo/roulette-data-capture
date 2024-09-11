@@ -50,9 +50,15 @@ const SignupPage: React.FC = () => {
         break;
       case "phone":
         formattedValue = formatPhone(value);
+        if (formattedValue === "") {
+          isValid = false;
+        }
         break;
       case "dob":
         formattedValue = formatDate(value);
+        if (formattedValue === "") {
+          isValid = false;
+        }
         break;
       default:
         break;
