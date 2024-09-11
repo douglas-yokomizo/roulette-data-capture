@@ -15,6 +15,7 @@ const RoulettePage = () => {
   const [angle, setAngle] = useState(0);
   const [isSpinning, setIsSpinning] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState<number | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const router = useRouter();
   const logoRef = useRef<HTMLImageElement | null>(null);
@@ -24,6 +25,7 @@ const RoulettePage = () => {
 
   useEffect(() => {
     const fetchPrizes = async () => {
+      setIsLoading(true);
       const { data, error } = await supabase.from("prizes").select("*");
       if (error) {
         console.error(error);
@@ -34,6 +36,7 @@ const RoulettePage = () => {
         );
         setActivePrizes(filteredPrizes);
       }
+      setIsLoading(false);
     };
     fetchPrizes();
   }, []);
@@ -223,9 +226,26 @@ const RoulettePage = () => {
     visible: { y: 0, opacity: 1, transition: { duration: 1 } },
   };
 
-  {
-    !allPrizes && <p>Carregando...</p>;
+  if (isLoading) {
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 3 }}
+        className="flex items-center flex-col gap-6 justify-center h-screen bg-branco bg-cover bg-center"
+      >
+        <motion.h1
+          className="text-5xl text-center font-semibold text-afya-pink"
+          initial="hidden"
+          animate="visible"
+          variants={titleVariants}
+        >
+          Carregando...
+        </motion.h1>
+      </motion.div>
+    );
   }
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
