@@ -39,26 +39,16 @@ const SignupPage: React.FC = () => {
 
   const handleInputChange = (value: string) => {
     let formattedValue = value;
-    let isValid = true;
 
     switch (focusedInput) {
       case "cpf":
         formattedValue = formatCpf(value);
-        if (formattedValue === "") {
-          isValid = false;
-        }
         break;
       case "phone":
         formattedValue = formatPhone(value);
-        if (formattedValue === "") {
-          isValid = false;
-        }
         break;
       case "dob":
         formattedValue = formatDate(value);
-        if (formattedValue === "") {
-          isValid = false;
-        }
         break;
       default:
         break;
@@ -68,7 +58,6 @@ const SignupPage: React.FC = () => {
       ...signupData,
       [focusedInput]: formattedValue,
     });
-    return isValid;
   };
 
   const router = useRouter();
@@ -275,6 +264,12 @@ const SignupPage: React.FC = () => {
         isVisible={isVirtualKeyboardVisible}
         onChange={handleInputChange}
         focusedInput={focusedInput}
+        inputValue={
+          typeof signupData[focusedInput as keyof typeof signupData] ===
+          "string"
+            ? (signupData[focusedInput as keyof typeof signupData] as string)
+            : ""
+        }
       />
     </motion.div>
   );

@@ -1,23 +1,25 @@
 "use client";
 import { useState, useEffect } from "react";
+import Draggable from "react-draggable";
 
 interface IVirtualKeyboard {
   isVisible: boolean;
   onChange: (value: string) => void;
   focusedInput: string;
+  inputValue: string;
 }
 
 const VirtualKeyboard = ({
   isVisible,
   onChange,
+  inputValue,
   focusedInput,
 }: IVirtualKeyboard) => {
-  const [inputValue, setInputValue] = useState("");
-  const [lastAccentKey, setLastAccentKey] = useState("");
+  const [lastAccentKey, setLastAccentKey] = useState<string | null>(null);
 
   useEffect(() => {
     if (isVisible) {
-      setInputValue("");
+      setLastAccentKey("");
     }
   }, [isVisible, focusedInput]);
 
@@ -31,12 +33,17 @@ const VirtualKeyboard = ({
 
   const handleKeyPress = (key: string): void => {
     const maxLengths: Record<string, number> = {
-      cpf: 11,
-      dob: 8,
-      phone: 11,
+      cpf: 14,
+      dob: 10,
+      phone: 15,
     };
 
-    if (["cpf", "dob", "phone"].includes(focusedInput) && !/^\d$/.test(key)) {
+    if (
+      ["cpf", "dob", "phone"].includes(focusedInput) &&
+      !/^\d$/.test(key) &&
+      key !== "backspace" &&
+      key !== "space"
+    ) {
       return;
     }
 
@@ -48,44 +55,28 @@ const VirtualKeyboard = ({
       return;
     }
 
-    if (["´", "~"].includes(key)) {
-      if (lastAccentKey) {
-        setInputValue(inputValue + lastAccentKey);
-        onChange(inputValue + lastAccentKey);
-      }
-      setLastAccentKey(key);
+    if (key === "backspace") {
+      onChange(inputValue.slice(0, -1));
       return;
     }
 
-    let newValue = inputValue;
-    if (lastAccentKey) {
-      const combinedChar = combineAccentWithChar(lastAccentKey, key);
-      if (combinedChar !== key) {
-        newValue = newValue + combinedChar;
-      } else {
-        newValue = newValue + lastAccentKey + key;
-      }
-      setLastAccentKey("");
-    } else {
-      switch (key) {
-        case "backspace":
-          newValue = inputValue.slice(0, -1);
-          break;
-        case "space":
-          newValue += " ";
-          break;
-        default:
-          newValue += key;
-      }
+    if (key === "space") {
+      onChange(inputValue + " ");
+      return;
     }
 
-    const isValid = onChange(newValue);
-    //@ts-ignore
-    if (!isValid) {
-      setInputValue("");
-    } else {
-      setInputValue(newValue);
+    if (["´", "~"].includes(key)) {
+      if (lastAccentKey) {
+        const combinedChar = combineAccentWithChar(lastAccentKey, key);
+        onChange(inputValue + combinedChar);
+        setLastAccentKey(null);
+      } else {
+        setLastAccentKey(key);
+      }
+      return;
     }
+
+    onChange(inputValue + key);
   };
 
   const keysRow1 = "1234567890-@";
@@ -96,37 +87,42 @@ const VirtualKeyboard = ({
   if (!isVisible) return null;
 
   return (
-    <div className=" fixed w-4/5 bottom-0 left-1/2 transform -translate-x-1/2 bg-gray-200 p-6 rounded-t-lg shadow-lg">
-      {[keysRow1, keysRow2, keysRow3, keysRow4].map((row, index) => (
-        <div key={index} className="flex justify-center my-1">
-          {row.split("").map((key) => (
-            <button
-              key={key}
-              onClick={() => handleKeyPress(key)}
-              className="px-4 py-3 w-full bg-white border border-gray-400 rounded shadow mx-1"
-            >
-              {key}
-            </button>
-          ))}
-          {index === 0 && (
-            <button
-              onClick={() => handleKeyPress("backspace")}
-              className=" mx-1 px-2 py-1 bg-white border border-gray-400 rounded shadow"
-            >
-              Backspace
-            </button>
-          )}
+    <Draggable handle=".handle">
+      <div className="fixed w-4/5 bottom-0 left-1/2 transform -translate-x-1/2 bg-gray-200 p-6 rounded-t-lg shadow-lg">
+        <div className="handle cursor-move bg-gray-300 p-2 rounded-t-lg text-center">
+          Drag Me
         </div>
-      ))}
-      <div className="flex justify-center my-1">
-        <button
-          onClick={() => handleKeyPress("space")}
-          className=" w-full px-8 py-4 bg-white border border-gray-400 rounded shadow"
-        >
-          Espaço
-        </button>
+        {[keysRow1, keysRow2, keysRow3, keysRow4].map((row, index) => (
+          <div key={index} className="flex justify-center my-1">
+            {row.split("").map((key) => (
+              <button
+                key={key}
+                onClick={() => handleKeyPress(key)}
+                className="px-4 py-3 w-full bg-white border border-gray-400 rounded shadow mx-1"
+              >
+                {key}
+              </button>
+            ))}
+            {index === 0 && (
+              <button
+                onClick={() => handleKeyPress("backspace")}
+                className="mx-1 px-2 py-1 bg-white border border-gray-400 rounded shadow"
+              >
+                Backspace
+              </button>
+            )}
+          </div>
+        ))}
+        <div className="flex justify-center my-1">
+          <button
+            onClick={() => handleKeyPress("space")}
+            className="w-full px-8 py-4 bg-white border border-gray-400 rounded shadow"
+          >
+            Espaço
+          </button>
+        </div>
       </div>
-    </div>
+    </Draggable>
   );
 };
 
