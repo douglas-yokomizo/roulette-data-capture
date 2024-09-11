@@ -19,15 +19,16 @@ export const saveChoice = async (data: ISignupData) => {
 export const checkCpfExists = async (cpf: string) => {
   const { data, error } = await supabase
     .from("users")
-    .select("cpf")
-    .eq("cpf", cpf);
+    .select("id")
+    .eq("cpf", cpf)
+    .single();
 
   if (error) {
     console.error(error);
     return false;
   }
 
-  return data.length > 0;
+  return !!data;
 };
 
 export const saveUserPrize = async (userId: string, prize: string) => {

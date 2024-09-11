@@ -65,6 +65,7 @@ const SignupPage: React.FC = () => {
     name: "",
     cpf: "",
     email: "",
+    dob: "",
   });
   const [isPrivacyPolicyModalOpen, setPrivacyPolicyModalOpen] = useState(false);
 
@@ -102,11 +103,16 @@ const SignupPage: React.FC = () => {
   };
 
   const isFormValid = () => {
+    const isCpfValid = signupData.cpf.length === 14; // CPF format: 000.000.000-00
+    const isDobValid = signupData.dob.length === 10; // DOB format: 00/00/0000
+
     return (
       signupData.cpf &&
       signupData.name &&
       signupData.email &&
-      signupData.privacyPolicy
+      signupData.privacyPolicy &&
+      isCpfValid &&
+      isDobValid
     );
   };
 
@@ -117,12 +123,32 @@ const SignupPage: React.FC = () => {
       name: signupData.name ? "" : "Este campo é obrigatório",
       cpf: signupData.cpf ? "" : "Este campo é obrigatório",
       email: signupData.email ? "" : "Este campo é obrigatório",
+      dob: signupData.dob ? "" : "Este campo é obrigatório",
     };
 
     const hasErrors = Object.values(newErrors).some((error) => error !== "");
 
     if (hasErrors) {
       setErrors(newErrors);
+      return;
+    }
+
+    const isCpfValid = signupData.cpf.length === 14; // CPF format: 000.000.000-00
+    const isDobValid = signupData.dob.length === 10; // DOB format: 00/00/0000
+
+    if (!isCpfValid) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        cpf: "CPF incompleto",
+      }));
+      return;
+    }
+
+    if (!isDobValid) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        dob: "Data de nascimento incompleta",
+      }));
       return;
     }
 
@@ -187,6 +213,7 @@ const SignupPage: React.FC = () => {
           name="dob"
           placeholder="00/00/0000"
           maxLength={10}
+          error={errors.dob}
           onFocus={handleInputFocus}
         />
         <InputField
