@@ -79,7 +79,7 @@ const VirtualKeyboard = ({
     onChange(inputValue + key);
   };
 
-  const keysRow1 = "1234567890-@";
+  const keysRow1 = "1234567890-@_";
   const keysRow2 = "qwertyuiop´";
   const keysRow3 = "asdfghjklç~";
   const keysRow4 = "zxcvbnm.,[]";
