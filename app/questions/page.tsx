@@ -7,6 +7,7 @@ import { IoLibraryOutline, IoPersonOutline } from "react-icons/io5";
 import { FaUserGraduate } from "react-icons/fa";
 import { SignupContext } from "../contexts/SignupContext";
 import { saveChoice } from "../utils/supabase/client";
+import toast, { Toaster } from "react-hot-toast";
 import afyaLogo from "../public/images/logoBranco.png";
 import booksIcon from "../public/icons/books.png";
 
@@ -53,6 +54,11 @@ const QuestionsPage = () => {
   };
 
   const handleFinish = async () => {
+    if (!selectedModalOption) {
+      toast.error("Por favor, selecione uma opção.");
+      return;
+    }
+
     if (selectedOption) {
       const formattedChoice =
         selectedOption === "Estudante"
@@ -76,6 +82,7 @@ const QuestionsPage = () => {
       animate="visible"
       className="h-screen bg-rosa bg-center bg-cover w-full flex flex-col justify-center items-center"
     >
+      <Toaster />
       <motion.h1
         className="font-bold text-5xl text-pink-100 mb-24 text-center"
         variants={titleVariants}
@@ -235,7 +242,7 @@ const QuestionsPage = () => {
                 </button>
               </div>
             ) : (
-              <div className="flex justify-center items-center space-x-4 mb-8">
+              <div className="flex flex-col justify-center items-center space-y-4 mb-8">
                 <button
                   onClick={() =>
                     handleModalSelect("Profissional de saúde pública")
@@ -259,6 +266,16 @@ const QuestionsPage = () => {
                   }`}
                 >
                   Profissional de saúde privado
+                </button>
+                <button
+                  onClick={() => handleModalSelect("Outros")}
+                  className={`border-2 border-afya-pink font-bold py-4 px-8 rounded ${
+                    selectedModalOption === "Outros"
+                      ? "bg-afya-pink text-pink-100"
+                      : "text-afya-pink"
+                  }`}
+                >
+                  Outros
                 </button>
               </div>
             )}
