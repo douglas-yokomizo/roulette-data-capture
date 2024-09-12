@@ -40,7 +40,7 @@ const SupriseGiftPage = () => {
         }}
       >
         <h2 className="text-4xl font-bold text-center text-white mt-10 mb-8">
-          Escaneie o QR Code abaixo para acessar o Curso Afya.
+          Escaneie o QR Code abaixo para acessar o Brinde Surpresa Afya.
         </h2>
         <Image
           src={qrCodeBrinde}
