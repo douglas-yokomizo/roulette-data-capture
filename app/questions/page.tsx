@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { IoLibraryOutline, IoPersonOutline } from "react-icons/io5";
-import { FaStethoscope } from "react-icons/fa";
+import { FaUserGraduate } from "react-icons/fa";
 import { SignupContext } from "../contexts/SignupContext";
 import { saveChoice } from "../utils/supabase/client";
 import afyaLogo from "../public/images/logoBranco.png";
@@ -33,7 +33,6 @@ const logoVariants = {
 const QuestionsPage = () => {
   const { signupData } = useContext(SignupContext);
   const [showModal, setShowModal] = useState(false);
-  const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [selectedModalOption, setSelectedModalOption] = useState<string | null>(
     null
@@ -42,11 +41,7 @@ const QuestionsPage = () => {
 
   const handleSelect = (option: string) => {
     setSelectedOption(option);
-    if (option === "Estudante") {
-      setShowModal(true);
-    } else {
-      setShowConfirmModal(true);
-    }
+    setShowModal(true);
   };
 
   const handleModalSelect = (option: string) => {
@@ -57,25 +52,14 @@ const QuestionsPage = () => {
     setShowModal(false);
   };
 
-  const handleConfirmCloseModal = () => {
-    setShowConfirmModal(false);
-  };
-
-  const handleConfirm = async () => {
-    if (selectedOption) {
-      const dataToSave = {
-        ...signupData,
-        choice: selectedOption,
-      };
-      await saveChoice(dataToSave);
-      setShowConfirmModal(false);
-      router.push("/roulette");
-    }
-  };
-
   const handleFinish = async () => {
-    if (selectedModalOption) {
-      const formattedChoice = `Estudante: ${selectedModalOption}`;
+    if (selectedOption) {
+      const formattedChoice =
+        selectedOption === "Estudante"
+          ? `Estudante: ${selectedModalOption}`
+          : selectedOption === "Docente"
+          ? `Docente: ${selectedModalOption}`
+          : `Profissional de outra área: ${selectedModalOption}`;
       const dataToSave = {
         ...signupData,
         choice: formattedChoice,
@@ -125,9 +109,9 @@ const QuestionsPage = () => {
             </div>
           </motion.button>
           <motion.button
-            onClick={() => handleSelect("Médico")}
+            onClick={() => handleSelect("Docente")}
             className={`flex-1 border-2 border-pink-100 font-bold p-10 rounded-xl ${
-              selectedOption === "Médico"
+              selectedOption === "Docente"
                 ? "bg-afya-pink text-pink-100"
                 : "bg-pink-100 text-afya-pink"
             }`}
@@ -136,14 +120,14 @@ const QuestionsPage = () => {
             <div className="flex flex-col gap-2 items-center justify-center">
               <div
                 className={`p-3 rounded-full ${
-                  selectedOption === "Médico"
+                  selectedOption === "Docente"
                     ? "bg-pink-100 text-afya-pink"
                     : "bg-afya-pink text-pink-100"
                 }`}
               >
-                <FaStethoscope size={40} />
+                <FaUserGraduate size={40} />
               </div>
-              Sou médico
+              Sou docente
             </div>
           </motion.button>
         </div>
@@ -166,7 +150,7 @@ const QuestionsPage = () => {
             >
               <IoPersonOutline size={40} />
             </div>
-            Profissional de outra área
+            Sou profissional de outra área
           </div>
         </motion.button>
       </div>
@@ -198,75 +182,92 @@ const QuestionsPage = () => {
               />
             </div>
             <h2 className="text-2xl text-center text-afya-pink font-semibold my-10">
-              Em que período da jornada <br /> acadêmica você está?
+              {selectedOption === "Estudante"
+                ? "Em que período da jornada acadêmica você está?"
+                : selectedOption === "Docente"
+                ? "Em qual área você atua?"
+                : "Você se identifica como?"}
             </h2>
-            <div className="flex justify-center items-center space-x-4 mb-8">
-              <button
-                onClick={() => handleModalSelect("1º ao 4º ano")}
-                className={`border-2 border-afya-pink font-bold py-4 px-8 rounded ${
-                  selectedModalOption === "1º ao 4º ano"
-                    ? "bg-afya-pink text-pink-100"
-                    : "text-afya-pink"
-                }`}
-              >
-                1º ao 4º ano
-              </button>
-              <button
-                onClick={() => handleModalSelect("5º ao 6º ano")}
-                className={`border-2 border-afya-pink font-bold py-4 px-8 rounded ${
-                  selectedModalOption === "5º ao 6º ano"
-                    ? "bg-afya-pink text-pink-100"
-                    : "text-afya-pink"
-                }`}
-              >
-                5º ao 6º ano
-              </button>
-            </div>
+            {selectedOption === "Estudante" ? (
+              <div className="flex justify-center items-center space-x-4 mb-8">
+                <button
+                  onClick={() => handleModalSelect("1º ao 4º ano")}
+                  className={`border-2 border-afya-pink font-bold py-4 px-8 rounded ${
+                    selectedModalOption === "1º ao 4º ano"
+                      ? "bg-afya-pink text-pink-100"
+                      : "text-afya-pink"
+                  }`}
+                >
+                  1º ao 4º ano
+                </button>
+                <button
+                  onClick={() => handleModalSelect("5º ao 6º ano")}
+                  className={`border-2 border-afya-pink font-bold py-4 px-8 rounded ${
+                    selectedModalOption === "5º ao 6º ano"
+                      ? "bg-afya-pink text-pink-100"
+                      : "text-afya-pink"
+                  }`}
+                >
+                  5º ao 6º ano
+                </button>
+              </div>
+            ) : selectedOption === "Docente" ? (
+              <div className="flex justify-center items-center space-x-4 mb-8">
+                <button
+                  onClick={() => handleModalSelect("Área médica")}
+                  className={`border-2 border-afya-pink font-bold py-4 px-8 rounded ${
+                    selectedModalOption === "Área médica"
+                      ? "bg-afya-pink text-pink-100"
+                      : "text-afya-pink"
+                  }`}
+                >
+                  Área médica
+                </button>
+                <button
+                  onClick={() => handleModalSelect("Outra área")}
+                  className={`border-2 border-afya-pink font-bold py-4 px-8 rounded ${
+                    selectedModalOption === "Outra área"
+                      ? "bg-afya-pink text-pink-100"
+                      : "text-afya-pink"
+                  }`}
+                >
+                  Outra área
+                </button>
+              </div>
+            ) : (
+              <div className="flex justify-center items-center space-x-4 mb-8">
+                <button
+                  onClick={() =>
+                    handleModalSelect("Profissional de saúde pública")
+                  }
+                  className={`border-2 border-afya-pink font-bold py-4 px-8 rounded ${
+                    selectedModalOption === "Profissional de saúde pública"
+                      ? "bg-afya-pink text-pink-100"
+                      : "text-afya-pink"
+                  }`}
+                >
+                  Profissional de saúde pública
+                </button>
+                <button
+                  onClick={() =>
+                    handleModalSelect("Profissional de saúde privado")
+                  }
+                  className={`border-2 border-afya-pink font-bold py-4 px-8 rounded ${
+                    selectedModalOption === "Profissional de saúde privado"
+                      ? "bg-afya-pink text-pink-100"
+                      : "text-afya-pink"
+                  }`}
+                >
+                  Profissional de saúde privado
+                </button>
+              </div>
+            )}
             <button
               onClick={handleFinish}
               className="absolute bottom-6 right-6 bg-afya-pink text-pink-100 font-bold py-2 px-4 rounded-lg"
             >
-              Finalizar
+              Confirmar
             </button>
-          </div>
-        </motion.div>
-      )}
-
-      {showConfirmModal && (
-        <motion.div
-          className="fixed inset-0 flex items-center justify-center backdrop-blur-sm"
-          onClick={handleConfirmCloseModal}
-          initial="hidden"
-          animate="visible"
-          variants={modalVariants}
-        >
-          <div
-            className="bg-white p-24 rounded-lg shadow-md relative"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              onClick={handleConfirmCloseModal}
-              className="absolute text-2xl top-2 right-2 text-afya-pink"
-            >
-              X
-            </button>
-            <h2 className="text-2xl text-center text-afya-pink font-semibold mb-8">
-              Confirmar escolha?
-            </h2>
-            <div className="flex justify-center items-center space-x-4">
-              <button
-                onClick={handleConfirm}
-                className="border-2 border-afya-pink text-afya-pink font-bold py-4 px-8 rounded"
-              >
-                Confirmar
-              </button>
-              <button
-                onClick={handleConfirmCloseModal}
-                className="border-2 border-afya-pink bg-afya-pink text-pink-100 font-bold py-4 px-8 rounded"
-              >
-                Cancelar
-              </button>
-            </div>
           </div>
         </motion.div>
       )}
